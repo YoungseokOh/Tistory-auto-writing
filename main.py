@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 
 import app_config
 import utils
+import crawling
 
 origin = 'out'
 output_type = 'json'  # 'xml' xml 기능 구현 안됨
@@ -220,12 +221,13 @@ def blog_upload(blog_name, uploadedfile_path):
 
 
 if __name__ == '__main__':
-    utils.check_folder(origin)
+    # crawling.main()
+    # utils.check_folder(origin)
     # 계정 블로그 정보들 읽기
-    blog_info()
+    # blog_info()
 
     # 블로그 리스트 읽기
-    # blog_list('chandong83', 1)
+    blog_list('all-snowball-effect', 1)
 
     # 블로그 카테고리 읽기
     # blog_category_list('chandong83')

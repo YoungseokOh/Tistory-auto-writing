@@ -1,2 +1,2 @@
-access_token='YOUR ACCESS TOKEN'
-app_id = 'YOUR APP ID'
+access_token='b4962348d20d4c42e6b3bb1212b6aa0a_6a8809605bac456db4a8bd99b3ab7357'
+app_id = '8a44204f47579015de1f8d3a98f88e70'
