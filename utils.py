@@ -47,3 +47,10 @@ def remove_xa0(list):
         temp = i.replace(u'\xa0', u' ')
         temp_list.append(temp)
     return temp_list
+
+
+def remove_slash_nt(str):
+    temp_str = str.replace("\n", "")
+    str = temp_str.replace("\t", "")
+    str = str.split("(")[0]
+    return str

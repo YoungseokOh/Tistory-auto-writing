@@ -46,25 +46,33 @@ def day_crawling(url, date_text):
     print(answer)
 
 def main():
-    save_path = './캐시워크/{}'.format(date.today())
-    if not utils.check_exist(save_path):
-        utils.make_folder(save_path)
-    for page_num in range(1, 6):
-        today_date = date.today()
-        date_text = '{}월{}일'.format(today_date.month, today_date.day)
-        blog_list_url = 'https://luckyquiz.tistory.com/category/%EC%BA%90%EC%8B%9C%EC%9B%8C%ED%81%AC%20%EB%8F%88%EB%B2%84%EB%8A%94%ED%80%B4%EC%A6%88?page={}'.format(
-            page_num)
-        bs = BeautifulSoup(
-            urllib.request.urlopen(blog_list_url).read(), 'html.parser')
-        for post in range(len(bs.select('.post-item'))):
-            post_title = bs.select('.post-item')[post].find('span', {'class': 'title'})
-            if not date_text in post_title.getText():
-                print('Not today post.')
-                break
-            blog_crawling_url = 'https://luckyquiz.tistory.com/{}?category=748685'.format(
-                bs.select('.post-item')[post].find('a')['href'][1:5])
-            # print(bs.select('.post-item')[0].find('a')['href'][1:5])
-            day_crawling(blog_crawling_url, date_text)
+    # For test
+    blog_list_url = 'https://luckyquiz.tistory.com/category/'
+    bs_Test = BeautifulSoup(
+        urllib.request.urlopen(blog_list_url).read(), 'html.parser')
+    category_len = len(bs_Test.find_all('a', attrs={'class': 'link_item'}))
+    for cate_num in range(category_len):
+        category_name = utils.remove_slash_nt(bs_Test.find_all('a', attrs={'class': 'link_item'})[cate_num].getText())
+        category_href = bs_Test.find_all('a', attrs={'class': 'link_item'})[cate_num]["href"]
+        save_path = './{}/{}'.format(category_name, date.today())
+        if not utils.check_exist(save_path):
+            utils.make_folder(save_path)
+        for page_num in range(1, 6):
+            today_date = date.today()
+            date_text = '{}월{}일'.format(today_date.month, today_date.day)
+            blog_list_url = 'https://luckyquiz.tistory.com/{}?page={}'.format(
+                category_href, page_num)
+            bs = BeautifulSoup(
+                urllib.request.urlopen(blog_list_url).read(), 'html.parser')
+            for post in range(len(bs.select('.post-item'))):
+                post_title = bs.select('.post-item')[post].find('span', {'class': 'title'})
+                if not date_text in post_title.getText():
+                    print('Not today post.')
+                    break
+                blog_crawling_url = 'https://luckyquiz.tistory.com/{}?category=748685'.format(
+                    bs.select('.post-item')[post].find('a')['href'][1:5])
+                # print(bs.select('.post-item')[0].find('a')['href'][1:5])
+                day_crawling(blog_crawling_url, date_text)
 
 if __name__ == '__main__':
     main()

@@ -227,13 +227,13 @@ if __name__ == '__main__':
     # blog_info()
 
     # 블로그 리스트 읽기
-    blog_list('all-snowball-effect', 1)
+    # blog_list('tastediary', 1)
 
     # 블로그 카테고리 읽기
-    # blog_category_list('chandong83')
+    # blog_category_list('tastediary')
 
     # 게시물 작성
-    # blog_write('chandong83', '0', 'title', 'test content', 'tag')
+    blog_write('tastediary', '0', '돈버는 퀴즈 테스트', 'HI', 'tag')
 
     # 게시물 읽기
     # blog_read('chandong83', 200)
