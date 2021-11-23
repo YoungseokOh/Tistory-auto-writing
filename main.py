@@ -258,7 +258,7 @@ if __name__ == '__main__':
     # blog_category_list('tastediary')
 
     # 게시물 작성
-    blog_write('tastediary', '0', '돈버는 퀴즈 테스트', html, 'tag')
+    blog_write('tastediary', '0', '오퀴즈 테스트', html, 'tag')
 
     # 게시물 읽기
     # blog_read('chandong83', 200)

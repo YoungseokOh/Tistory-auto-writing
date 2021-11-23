@@ -55,10 +55,22 @@ def remove_slash_nt(str):
     str = str.split("(")[0]
     return str
 
+
+def real_answer(str):
+    str_temp = str.split('정답은')
+    str_temp = str_temp[1]
+    str = str_temp.split('입니다.')
+    str = str[0]
+    return str
+
+
 def create_qa(answer):
     attach = ""
-    p_open = "<p>"
+    p_open = "<p style="'"text-align: center; font-size: 12pt;"'" data-ke-size="'"size12"'">"
     p_close = "</p>"
+    answer_open = "<p style="'"text-align: center; font-size: 18pt;"'" data-ke-size="'"size18"'"><b>정답은<span style="'"color: #115CB4;"'">" \
+                  "<span>&nbsp;{ans}</span><span>&nbsp;</span></span>입니다.</b></p>"
+    answer_close = "</p>"
     for n in range(len(answer)):
         attach = attach + p_open
         question = answer['post'][n]['question']
@@ -66,8 +78,11 @@ def create_qa(answer):
         attach = attach + p_open
         attach = attach + p_close
         ans = answer['post'][n]['answer']
+        ans = real_answer(ans)
+        ans = answer_open.format(ans=ans)
         attach = attach + ans
         attach = attach + p_close
+        print(attach)
     return attach
 
 
