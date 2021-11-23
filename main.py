@@ -2,10 +2,11 @@ import socket
 import requests
 import json
 from bs4 import BeautifulSoup
-
+import os
 import app_config
 import utils
 import crawling
+from datetime import date, datetime
 
 origin = 'out'
 output_type = 'json'  # 'xml' xml 기능 구현 안됨
@@ -221,7 +222,31 @@ def blog_upload(blog_name, uploadedfile_path):
 
 
 if __name__ == '__main__':
-    # crawling.main()
+    # Main Path
+    main_path = './answer/'
+    # date_str -> "%y-%m-%d" or date.today()
+    date_str = "2021-11-22"
+    if date_str.__class__.__name__ == 'date':
+        today_date = date_str
+    else:
+        today_date = datetime.strptime(date_str, "%Y-%m-%d")
+        today_date = today_date.date()
+    # Crawling
+    # crawling.main(today_date)
+    answer_folder_list = utils.read_folder_list(main_path)
+    for folder in answer_folder_list:
+        html_path = os.path.join(main_path, folder)
+        quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
+        answer_list = utils.read_folder_list(quiz_folder)
+        h = open(html_path + '/' + folder + '.html', 'r+', encoding='UTF-8')
+        for day_answer in answer_list:
+            f = open(os.path.join(quiz_folder, day_answer), encoding="UTF-8-sig")
+            answer = json.loads(f.read())
+            attach = utils.create_qa(answer)
+            html = h.read()
+            html = html.format(attach=attach)
+            print(html)
+
     # utils.check_folder(origin)
     # 계정 블로그 정보들 읽기
     # blog_info()
@@ -233,7 +258,7 @@ if __name__ == '__main__':
     # blog_category_list('tastediary')
 
     # 게시물 작성
-    blog_write('tastediary', '0', '돈버는 퀴즈 테스트', 'HI', 'tag')
+    blog_write('tastediary', '0', '돈버는 퀴즈 테스트', html, 'tag')
 
     # 게시물 읽기
     # blog_read('chandong83', 200)

@@ -39,17 +39,23 @@ def day_crawling(url, category_name, today_date, date_text):
     data['count'] = [len(questions)]
     for n in range(len(questions)):
         data['post'].append({"question": questions[n], "answer":answer[n]})
-    with open("./{}/{}/{}.json".format(category_name, today_date, title), 'w', encoding='UTF-8-sig') as outfile:
+    with open("./answer/{}/{}/{}.json".format(category_name, today_date, title), 'w', encoding='UTF-8-sig') as outfile:
         json.dump(data, outfile, ensure_ascii=False, indent=4)
     print(title)
     print(questions)
     print(answer)
 
 
-def main():
-    # For test
-    date_str = '2021-11-19'
-    today_date = datetime.strptime(date_str, "%Y-%m-%d")
+def main(today_date):
+    # excluded name
+    ex_name = []
+    # date_str -> "%y-%m-%d" or date.today()
+    # date_str = date.today()
+    # if date_str.__class__.__name__ == 'date':
+    #     today_date = date_str
+    # else:
+    #     today_date = datetime.strptime(date_str, "%Y-%m-%d")
+    date_str = datetime.strftime(today_date, "%Y-%m-%d")
     blog_list_url = 'https://luckyquiz.tistory.com/category/'
     bs_Test = BeautifulSoup(
         urllib.request.urlopen(blog_list_url).read(), 'html.parser')
@@ -57,12 +63,13 @@ def main():
     for cate_num in range(category_len):
         category_name = utils.remove_slash_nt(bs_Test.find_all('a', attrs={'class': 'link_item'})[cate_num].getText())
         print(category_name)
+        if "토스" in category_name:
+            continue
         category_href = bs_Test.find_all('a', attrs={'class': 'link_item'})[cate_num]["href"]
-        save_path = './{}/{}'.format(category_name, date_str)
+        save_path = './answer/{}/{}'.format(category_name, date_str)
         if not utils.check_exist(save_path):
             utils.make_folder(save_path)
         for page_num in range(1, 6):
-            #today_date = date.today()
             date_text = '{}월{}일'.format(today_date.month, today_date.day)
             blog_list_url = 'https://luckyquiz.tistory.com/{}?page={}'.format(
                 category_href, page_num)

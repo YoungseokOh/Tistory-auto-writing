@@ -54,3 +54,21 @@ def remove_slash_nt(str):
     str = temp_str.replace("\t", "")
     str = str.split("(")[0]
     return str
+
+def create_qa(answer):
+    attach = ""
+    p_open = "<p>"
+    p_close = "</p>"
+    for n in range(len(answer)):
+        attach = attach + p_open
+        question = answer['post'][n]['question']
+        attach = attach + question
+        attach = attach + p_open
+        attach = attach + p_close
+        ans = answer['post'][n]['answer']
+        attach = attach + ans
+        attach = attach + p_close
+    return attach
+
+
+
