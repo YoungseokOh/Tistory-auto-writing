@@ -225,7 +225,7 @@ if __name__ == '__main__':
     # Main Path
     main_path = './answer/'
     # date_str -> "%y-%m-%d" or date.today()
-    date_str = "2021-11-22"
+    date_str = "2021-11-29"
     if date_str.__class__.__name__ == 'date':
         today_date = date_str
     else:
@@ -235,17 +235,24 @@ if __name__ == '__main__':
     # crawling.main(today_date)
     answer_folder_list = utils.read_folder_list(main_path)
     for folder in answer_folder_list:
-        html_path = os.path.join(main_path, folder)
-        quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
-        answer_list = utils.read_folder_list(quiz_folder)
-        h = open(html_path + '/' + folder + '.html', 'r+', encoding='UTF-8')
-        for day_answer in answer_list:
-            f = open(os.path.join(quiz_folder, day_answer), encoding="UTF-8-sig")
-            answer = json.loads(f.read())
-            attach = utils.create_qa(answer)
-            html = h.read()
-            html = html.format(attach=attach)
-            print(html)
+        # only '캐시워크' Testing...
+        if '캐시워크' not in folder:
+            continue
+        else:
+            html_path = os.path.join(main_path, folder)
+            quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
+            answer_list = utils.read_folder_list(quiz_folder)
+            for day_answer in answer_list:
+                new_title = day_answer.split('.json')[0] + ' 돈버는퀴즈 정답'
+                h = open(html_path + '/' + folder + '.html', 'r+', encoding='UTF-8')
+                f = open(os.path.join(quiz_folder, day_answer), encoding="UTF-8-sig")
+                answer = json.loads(f.read())
+                attach = utils.create_qa(answer)
+                html = h.read()
+                html = html.format(attach=attach)
+                print(html)
+                blog_write('tastediary', '0', new_title, html, 'tag')
+                h.close()
 
     # utils.check_folder(origin)
     # 계정 블로그 정보들 읽기
@@ -258,7 +265,7 @@ if __name__ == '__main__':
     # blog_category_list('tastediary')
 
     # 게시물 작성
-    blog_write('tastediary', '0', '오퀴즈 테스트', html, 'tag')
+    # blog_write('tastediary', '0', '캐시워크 테스트', html, 'tag')
 
     # 게시물 읽기
     # blog_read('chandong83', 200)
