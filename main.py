@@ -6,6 +6,7 @@ import os
 import app_config
 import utils
 import crawling
+import time
 from datetime import date, datetime
 
 origin = 'out'
@@ -157,7 +158,7 @@ def blog_read(blog_name, post_id):
 
 def blog_write(blog_name, category_id, title, content, tag):
     url = 'https://www.tistory.com/apis/post/write'
-    visibility = 3
+    visibility = 0
     published = ''
     slogan = ''
     acceptComment = 1
@@ -214,8 +215,8 @@ def blog_upload(blog_name, uploadedfile_path):
         soup = BeautifulSoup(res.text, 'lxml')
         url = soup.select_one('url')
         print(url.text)
-
-        write_json_file('blog_upload_' + blog_name + '_' + uploadedfile_path + '.txt', url.text)
+        write_json_file('blog_upload_' + blog_name + '_' + os.path.split(uploadedfile_path)[1].split('.jpg')[0]+ '.txt', url.text)
+        return url.text
     else:
         json_result, json_text = json_parsing(res.text)
         print(json_text)
@@ -225,7 +226,7 @@ if __name__ == '__main__':
     # Main Path
     main_path = './answer/'
     # date_str -> "%y-%m-%d" or date.today()
-    date_str = "2021-11-29"
+    date_str = "2021-11-30"
     if date_str.__class__.__name__ == 'date':
         today_date = date_str
     else:
@@ -243,16 +244,20 @@ if __name__ == '__main__':
             quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
             answer_list = utils.read_folder_list(quiz_folder)
             for day_answer in answer_list:
-                new_title = day_answer.split('.json')[0] + ' 돈버는퀴즈 정답'
+                new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로!'
                 h = open(html_path + '/' + folder + '.html', 'r+', encoding='UTF-8')
                 f = open(os.path.join(quiz_folder, day_answer), encoding="UTF-8-sig")
                 answer = json.loads(f.read())
                 attach = utils.create_qa(answer)
                 html = h.read()
-                html = html.format(attach=attach)
+                # When you upload 'Image'
+                img_url = blog_upload('tastediary', './jpg/cashwork.jpg')
+                html = html.format(attach=attach, img=img_url)
                 print(html)
-                blog_write('tastediary', '0', new_title, html, 'tag')
+                # category id '1037142' - 배부른 소크라테스 - 돈버는 캐시워크
+                blog_write('tastediary', '1037142', new_title, html, 'tag')
                 h.close()
+                time.sleep(120)
 
     # utils.check_folder(origin)
     # 계정 블로그 정보들 읽기

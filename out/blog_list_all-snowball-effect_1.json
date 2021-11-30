@@ -1,0 +1,24 @@
+{
+    "tistory": {
+        "status": "200",
+        "item": {
+            "url": "https://all-snowball-effect.tistory.com",
+            "secondaryUrl": "",
+            "page": "1",
+            "count": "10",
+            "totalCount": "1",
+            "posts": [
+                {
+                    "id": "1",
+                    "title": "돈이 눈덩이처럼 불어나는 재테크를 가능하게 하는 블로그",
+                    "postUrl": "https://all-snowball-effect.tistory.com/entry/%EB%8F%88%EC%9D%B4-%EB%88%88%EB%8D%A9%EC%9D%B4%EC%B2%98%EB%9F%BC-%EB%B6%88%EC%96%B4%EB%82%98%EB%8A%94-%EC%9E%AC%ED%85%8C%ED%81%AC%EB%A5%BC-%EA%B0%80%EB%8A%A5%ED%95%98%EA%B2%8C-%ED%95%98%EB%8A%94-%EB%B8%94%EB%A1%9C%EA%B7%B8",
+                    "visibility": "20",
+                    "categoryId": "1005221",
+                    "comments": "0",
+                    "trackbacks": "0",
+                    "date": "2021-11-11 23:27:02"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "tistory": {
+        "status": "200",
+        "item": {
+            "url": "tastediary",
+            "secondaryUrl": "",
+            "categories": [
+                {
+                    "id": "722505",
+                    "name": "국내편",
+                    "parent": "",
+                    "label": "국내편",
+                    "entries": "8",
+                    "entriesInLogin": "8"
+                },
+                {
+                    "id": "722506",
+                    "name": "해외편",
+                    "parent": "",
+                    "label": "해외편",
+                    "entries": "2",
+                    "entriesInLogin": "2"
+                },
+                {
+                    "id": "1037142",
+                    "name": "돈버는퀴즈 캐시워크",
+                    "parent": "",
+                    "label": "돈버는퀴즈 캐시워크",
+                    "entries": "0",
+                    "entriesInLogin": "0"
+                }
+            ]
+        }
+    }
+}
