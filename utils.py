@@ -1,6 +1,6 @@
 import os
 import errno
-
+import json
 
 def check_folder(folder):
     try:
@@ -86,4 +86,16 @@ def create_qa(answer):
     return attach
 
 
+def json_load(path):
+    json_text = open(path).read()
+    dict_json = json.loads(json_text)
+    return dict_json
+
+
+def hour_to_minutes(str):
+    str = str.split(':')
+    hour = int(str[0])
+    minutes = int(str[1])
+    total_min = hour * 60 + minutes
+    return total_min
 

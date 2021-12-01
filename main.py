@@ -11,10 +11,9 @@ from datetime import date, datetime
 
 origin = 'out'
 output_type = 'json'  # 'xml' xml 기능 구현 안됨
-
 # https://tistory.github.io/document-tistory-apis/  # api 설명서
-
 # https://limsee.com/325 토큰 얻는 방법
+
 
 def json_parsing(response_json):
     json_text = json.dumps(response_json, indent=4, ensure_ascii=False)
@@ -24,11 +23,6 @@ def json_parsing(response_json):
 def write_json_file(file_name, json_text):
     with open(origin + '/' + file_name, "w", encoding='utf-8') as fp:
         fp.write(json_text)
-
-
-'''
-블로그 정보 얻기
-'''
 
 
 def blog_info():
@@ -73,11 +67,6 @@ def blog_info():
         print(json_text)
 
 
-'''
-해당 블로그의 카테고리 리스트 얻기
-'''
-
-
 def blog_category_list(blog_name):
     '''
     GET https://www.tistory.com/apis/category/list?
@@ -97,11 +86,6 @@ def blog_category_list(blog_name):
     else:
         json_text = json_parsing(res.json())
         print(json_text)
-
-
-'''
-해당 블로그의 리스트 얻기
-'''
 
 
 def blog_list(blog_name, page):
@@ -127,11 +111,6 @@ def blog_list(blog_name, page):
         print(json_text)
 
 
-'''
-해당 블로그의 지정 포스트 글 읽어오기
-'''
-
-
 def blog_read(blog_name, post_id):
     url = 'https://www.tistory.com/apis/post/read'
     '''
@@ -149,10 +128,6 @@ def blog_read(blog_name, post_id):
         json_text = json_parsing(res.json())
         print(json_text)
 
-
-'''
-해당 블로그에 글 쓰기
-'''
 
 def blog_write(blog_name, category_id, title, content, tag, today_date, now_time):
     url = 'https://www.tistory.com/apis/post/write'
@@ -183,7 +158,10 @@ def blog_write(blog_name, category_id, title, content, tag, today_date, now_time
         utils.make_folder('./out/{}'.format(today_date))
     # Status
     if res.status_code == 200:
-        json_text = json_parsing(res.json())
+        time_dict = dict({"time": now_time})
+        res = res.json()
+        res.update(time_dict)
+        json_text = json_parsing(res)
         print(json_text)
         write_name = 'blog_write_' + blog_name + '_' + category_id + '_' + title + '.json'
         write_json_file('{}/'.format(today_date) + write_name, json_text)
@@ -192,12 +170,48 @@ def blog_write(blog_name, category_id, title, content, tag, today_date, now_time
         print(json_text)
 
 
-'''
-해당 블로그에 파일 첨부
-'''
+def blog_update(blog_name, category_id, title, content, tag, today_date, now_time, postId):
+    url = 'https://www.tistory.com/apis/post/modify'
+    visibility = 0
+    published = ''
+    slogan = ''
+    acceptComment = 1
+    password = ''
+    '''
+    blogName: Blog Name (필수)
+    title: 글 제목 (필수)
+    content: 글 내용
+    visibility: 발행상태 (0: 비공개 - 기본값, 1: 보호, 3: 발행)
+    category: 카테고리 아이디 (기본값: 0)
+    published: 발행시간 (TIMESTAMP 이며 미래의 시간을 넣을 경우 예약. 기본값: 현재시간)
+    slogan: 문자 주소
+    tag: 태그 (',' 로 구분)
+    acceptComment: 댓글 허용 (0, 1 - 기본값)
+    password: 보호글 비밀번호
+    '''
+    data = {'access_token': app_config.access_token, 'output': output_type, 'blogName': blog_name, 'postId': postId,
+            'title': title, 'content': content, 'visibility': visibility, 'category': category_id, 'published': published,
+            'slogan': slogan, 'tag': tag, 'acceptComment': acceptComment, 'password': password}
+    res = requests.post(url, data=data)
+    print(res.url)
+    # today results path check
+    if not utils.check_exist('./out/{}'.format(today_date)):
+        utils.make_folder('./out/{}'.format(today_date))
+    # Status
+    if res.status_code == 200:
+        time_dict = dict({"time": now_time})
+        res = res.json()
+        res.update(time_dict)
+        json_text = json_parsing(res)
+        print(json_text)
+        write_name = 'blog_write_' + blog_name + '_' + category_id + '_' + title + '.json'
+        write_json_file('{}/'.format(today_date) + write_name, json_text)
+    else:
+        json_text = json_parsing(res.json())
+        print(json_text)
 
 
-def blog_upload(blog_name, uploadedfile_path):
+def blog_upload(blog_name, uploadedfile_path, now_time):
     '''
         POST https://www.tistory.com/apis/post/attach?
         access_token={access-token}
@@ -213,7 +227,8 @@ def blog_upload(blog_name, uploadedfile_path):
     print(res.url)
     if res.status_code == 200:
         print(res.text)
-
+        time_dict = dict({"time": now_time})
+        time_text = json_parsing(time_dict)
         # 업로드된 URL 주소
         soup = BeautifulSoup(res.text, 'lxml')
         url = soup.select_one('url')
@@ -225,30 +240,50 @@ def blog_upload(blog_name, uploadedfile_path):
         print(json_text)
 
 
-def wrote_check(wrote_list, title):
+def wrote_check(wrote_list, title, today_date):
+    pre_text = 'blog_write_tastediary_1037142_'
+    json_ext = '.json'
     for wrote_name in wrote_list:
-        wrote_name = wrote_name.split('blog_write_tastediary_1037142_')
-        wrote_name = wrote_name[1].split('.json')
+        if pre_text not in wrote_name:
+            continue
+        wrote_name = wrote_name.split(pre_text)
+        wrote_name = wrote_name[1].split(json_ext)
         if title in wrote_name[0]:
-            return True, time
+            path = 'out/{}/{}{}{}'.format(today_date, pre_text, title, json_ext)
+            wrote_json = utils.json_load(path)
+            return True, wrote_json['time'], wrote_json['tistory']['postId']
         else:
             continue
-    return False, None
+    return False, None, None
 
+
+def create_html(html_path, main_folder, quiz_folder, day_answer):
+    h = open(html_path + '/' + main_folder + '.html', 'r+', encoding='UTF-8')
+    f = open(os.path.join(quiz_folder, day_answer), encoding="UTF-8-sig")
+    answer = json.loads(f.read())
+    attach = utils.create_qa(answer)
+    html = h.read()
+    img_url = blog_upload('tastediary', './jpg/cashwork.jpg', now_time)
+    html = html.format(attach=attach, img=img_url)
+    print(html)
+    h.close()
+    f.close()
+    return html
 
 
 if __name__ == '__main__':
     # Main Path
     main_path = './answer/'
     # date_str -> "%y-%m-%d" or date.today()
-    date_str = "2021-11-30"
+    # date_str = "2021-11-30"
+    date_str = date.today()
     if date_str.__class__.__name__ == 'date':
         today_date = date_str
     else:
         today_date = datetime.strptime(date_str, "%Y-%m-%d")
         today_date = today_date.date()
     # Crawling
-    # crawling.main(today_date)
+    crawling.main(today_date)
     answer_folder_list = utils.read_folder_list(main_path)
     for folder in answer_folder_list:
         # only '캐시워크' Testing...
@@ -262,19 +297,15 @@ if __name__ == '__main__':
             for day_answer in answer_list:
                 write_check_list = utils.read_folder_list('out/{}'.format(today_date))
                 new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로!'
-                exists_check, time = wrote_check(write_check_list, new_title)
-                h = open(html_path + '/' + folder + '.html', 'r+', encoding='UTF-8')
-                f = open(os.path.join(quiz_folder, day_answer), encoding="UTF-8-sig")
-                answer = json.loads(f.read())
-                attach = utils.create_qa(answer)
-                html = h.read()
-                # When you upload 'Image'
-                img_url = blog_upload('tastediary', './jpg/cashwork.jpg')
-                html = html.format(attach=attach, img=img_url)
-                print(html)
-                # category id '1037142' - 배부른 소크라테스 - 돈버는 캐시워크
-                blog_write('tastediary', '1037142', new_title, html, 'tag', today_date, now_time)
-                h.close()
+                exists_check, wrote_time, postId = wrote_check(write_check_list, new_title, today_date)
+                if exists_check:
+                    if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 120:
+                        update_html = create_html(html_path, folder, quiz_folder, day_answer)
+                        blog_update('tastediary', '1037142', new_title, update_html, 'tag', today_date, now_time, postId)
+                else:
+                    new_html = create_html(html_path, folder, quiz_folder, day_answer)
+                    # category id '1037142' - 배부른 소크라테스 - 돈버는 캐시워크
+                    blog_write('tastediary', '1037142', new_title, new_html, 'tag', today_date, now_time)
                 # time.sleep(120)
 
     # utils.check_folder(origin)
