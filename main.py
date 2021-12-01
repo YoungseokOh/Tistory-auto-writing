@@ -154,8 +154,7 @@ def blog_read(blog_name, post_id):
 해당 블로그에 글 쓰기
 '''
 
-
-def blog_write(blog_name, category_id, title, content, tag):
+def blog_write(blog_name, category_id, title, content, tag, today_date, now_time):
     url = 'https://www.tistory.com/apis/post/write'
     visibility = 0
     published = ''
@@ -179,10 +178,15 @@ def blog_write(blog_name, category_id, title, content, tag):
             'slogan': slogan, 'tag': tag, 'acceptComment': acceptComment, 'password': password}
     res = requests.post(url, data=data)
     print(res.url)
+    # today results path check
+    if not utils.check_exist('./out/{}'.format(today_date)):
+        utils.make_folder('./out/{}'.format(today_date))
+    # Status
     if res.status_code == 200:
         json_text = json_parsing(res.json())
         print(json_text)
-        write_json_file('blog_write_' + blog_name + '_' + category_id + '_' + title + '.json', json_text)
+        write_name = 'blog_write_' + blog_name + '_' + category_id + '_' + title + '.json'
+        write_json_file('{}/'.format(today_date) + write_name, json_text)
     else:
         json_text = json_parsing(res.json())
         print(json_text)
@@ -221,18 +225,30 @@ def blog_upload(blog_name, uploadedfile_path):
         print(json_text)
 
 
+def wrote_check(wrote_list, title):
+    for wrote_name in wrote_list:
+        wrote_name = wrote_name.split('blog_write_tastediary_1037142_')
+        wrote_name = wrote_name[1].split('.json')
+        if title in wrote_name[0]:
+            return True, time
+        else:
+            continue
+    return False, None
+
+
+
 if __name__ == '__main__':
     # Main Path
     main_path = './answer/'
     # date_str -> "%y-%m-%d" or date.today()
-    date_str = "2021-12-01"
+    date_str = "2021-11-30"
     if date_str.__class__.__name__ == 'date':
         today_date = date_str
     else:
         today_date = datetime.strptime(date_str, "%Y-%m-%d")
         today_date = today_date.date()
     # Crawling
-    crawling.main(today_date)
+    # crawling.main(today_date)
     answer_folder_list = utils.read_folder_list(main_path)
     for folder in answer_folder_list:
         # only '캐시워크' Testing...
@@ -242,8 +258,11 @@ if __name__ == '__main__':
             html_path = os.path.join(main_path, folder)
             quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
             answer_list = utils.read_folder_list(quiz_folder)
+            now_time = datetime.now().strftime("%H:%M")
             for day_answer in answer_list:
+                write_check_list = utils.read_folder_list('out/{}'.format(today_date))
                 new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로!'
+                exists_check, time = wrote_check(write_check_list, new_title)
                 h = open(html_path + '/' + folder + '.html', 'r+', encoding='UTF-8')
                 f = open(os.path.join(quiz_folder, day_answer), encoding="UTF-8-sig")
                 answer = json.loads(f.read())
@@ -254,7 +273,7 @@ if __name__ == '__main__':
                 html = html.format(attach=attach, img=img_url)
                 print(html)
                 # category id '1037142' - 배부른 소크라테스 - 돈버는 캐시워크
-                # blog_write('tastediary', '1037142', new_title, html, 'tag')
+                blog_write('tastediary', '1037142', new_title, html, 'tag', today_date, now_time)
                 h.close()
                 # time.sleep(120)
 
