@@ -263,8 +263,9 @@ def create_html(html_path, main_folder, quiz_folder, day_answer):
     answer = json.loads(f.read())
     attach = utils.create_qa(answer)
     html = h.read()
+    ads = utils.read_ads()
     img_url = blog_upload('tastediary', './jpg/cashwork.jpg', now_time)
-    html = html.format(attach=attach, img=img_url)
+    html = html.format(attach=attach, img=img_url, ads=ads)
     print(html)
     h.close()
     f.close()
@@ -275,7 +276,7 @@ if __name__ == '__main__':
     # Main Path
     main_path = './answer/'
     # date_str -> "%y-%m-%d" or date.today()
-    # date_str = "2021-11-30"
+    # date_str = "2021-12-02"
     date_str = date.today()
     if date_str.__class__.__name__ == 'date':
         today_date = date_str

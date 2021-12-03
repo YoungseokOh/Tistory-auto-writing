@@ -99,3 +99,23 @@ def hour_to_minutes(str):
     total_min = hour * 60 + minutes
     return total_min
 
+
+def read_ads():
+    ### Inplay ads
+    # ads = '<script async src='"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2895485609612928"'' \
+    #       'crossorigin='"anonymous"'></script>' \
+    #       '<ins class='"adsbygoogle"'style='"display:block; text-align:center;"'data-ad-layout='"in-article"'data-ad-format='"fluid"'data-ad-client='"ca-pub-2895485609612928"'data-ad-slot='"1085028600"'></ins>' \
+    #       '<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>'
+
+    ### Display ads
+    ads = '<script async src='"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2895485609612928"' crossorigin="anonymous"></script>' \
+          '<!-- Cashwork 디스플레이 본문 -->' \
+          '<ins class="adsbygoogle" ' \
+          'style="display:block"' \
+          'data-ad-client="ca-pub-2895485609612928"' \
+          'data-ad-slot="3057473877"' \
+          'data-ad-format="auto"' \
+          'data-full-width-responsive="true"></ins>' \
+          '<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>'
+    return ads
+
