@@ -131,7 +131,7 @@ def blog_read(blog_name, post_id):
 
 def blog_write(blog_name, category_id, title, content, tag, today_date, now_time):
     url = 'https://www.tistory.com/apis/post/write'
-    visibility = 0
+    visibility = 3
     published = ''
     slogan = ''
     acceptComment = 1
@@ -172,7 +172,7 @@ def blog_write(blog_name, category_id, title, content, tag, today_date, now_time
 
 def blog_update(blog_name, category_id, title, content, tag, today_date, now_time, postId):
     url = 'https://www.tistory.com/apis/post/modify'
-    visibility = 0
+    visibility = 3
     published = ''
     slogan = ''
     acceptComment = 1
@@ -282,6 +282,9 @@ if __name__ == '__main__':
     else:
         today_date = datetime.strptime(date_str, "%Y-%m-%d")
         today_date = today_date.date()
+    # Create out folder
+    if not utils.check_exist('out/{}'.format(today_date)):
+        utils.make_folder('out/{}'.format(today_date))
     # Crawling
     crawling.main(today_date)
     answer_folder_list = utils.read_folder_list(main_path)
@@ -299,7 +302,7 @@ if __name__ == '__main__':
                 new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로!'
                 exists_check, wrote_time, postId = wrote_check(write_check_list, new_title, today_date)
                 if exists_check:
-                    if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 120:
+                    if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 30:
                         update_html = create_html(html_path, folder, quiz_folder, day_answer)
                         blog_update('tastediary', '1037142', new_title, update_html, 'tag', today_date, now_time, postId)
                 else:
