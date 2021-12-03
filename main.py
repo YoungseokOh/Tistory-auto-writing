@@ -7,6 +7,7 @@ import app_config
 import utils
 import crawling
 import time
+import re
 from datetime import date, datetime
 
 origin = 'out'
@@ -242,19 +243,49 @@ def blog_upload(blog_name, uploadedfile_path, now_time):
 
 def wrote_check(wrote_list, title, today_date):
     pre_text = 'blog_write_tastediary_1037142_'
+    post_answer_text = ' 빠른 정답 확인 여기로!'
     json_ext = '.json'
     for wrote_name in wrote_list:
         if pre_text not in wrote_name:
             continue
-        wrote_name = wrote_name.split(pre_text)
-        wrote_name = wrote_name[1].split(json_ext)
-        if title in wrote_name[0]:
-            path = 'out/{}/{}{}{}'.format(today_date, pre_text, title, json_ext)
-            wrote_json = utils.json_load(path)
-            return True, wrote_json['time'], wrote_json['tistory']['postId']
+        sp_wrote_name = wrote_name.split(pre_text)
+        sp_wrote_name = sp_wrote_name[1].split(json_ext)[0]
+        sp_wrote_name = sp_wrote_name.split(post_answer_text)[0]
+        title = title.split(post_answer_text)[0]
+        title_words_list = title.split(' ')
+        wrote_name_words_list = sp_wrote_name.split(' ')
+        real_title = []
+        if len(title_words_list) != len(wrote_name_words_list):
+            for t_words in title_words_list:
+                match_word = re.findall(t_words, sp_wrote_name)
+                if match_word:
+                    real_title.append(match_word[0])
+            new_title = " ".join(real_title)
+            if new_title == sp_wrote_name:
+                wrote_json = utils.json_load('out/{}/{}{}{}'.format(today_date, pre_text, new_title + post_answer_text, json_ext))
+                return True, new_title + post_answer_text, wrote_json['time'], wrote_json['tistory']['postId']
+            elif new_title != sp_wrote_name:
+                count = 0
+                for w_words in wrote_name_words_list:
+                    for t_words in title_words_list:
+                        if w_words == t_words:
+                            count += 1
+                        else:
+                            continue
+                poe = count / len(title_words_list)
+                if poe > 0.51:
+                    wrote_json = utils.json_load(
+                        'out/{}/{}{}{}'.format(today_date, pre_text, sp_wrote_name + post_answer_text, json_ext))
+                    return True, sp_wrote_name + post_answer_text, wrote_json['time'], wrote_json['tistory']['postId']
+            else:
+                continue
+        elif title in sp_wrote_name:
+            wrote_json = utils.json_load(
+                'out/{}/{}{}{}'.format(today_date, pre_text, title + post_answer_text, json_ext))
+            return True, False, wrote_json['time'], wrote_json['tistory']['postId']
         else:
             continue
-    return False, None, None
+    return False, False, None, None
 
 
 def create_html(html_path, main_folder, quiz_folder, day_answer):
@@ -276,8 +307,8 @@ if __name__ == '__main__':
     # Main Path
     main_path = './answer/'
     # date_str -> "%y-%m-%d" or date.today()
-    # date_str = "2021-12-02"
-    date_str = date.today()
+    date_str = "2021-12-03"
+    # date_str = date.today()
     if date_str.__class__.__name__ == 'date':
         today_date = date_str
     else:
@@ -287,7 +318,7 @@ if __name__ == '__main__':
     if not utils.check_exist('out/{}'.format(today_date)):
         utils.make_folder('out/{}'.format(today_date))
     # Crawling
-    crawling.main(today_date)
+    # crawling.main(today_date)
     answer_folder_list = utils.read_folder_list(main_path)
     for folder in answer_folder_list:
         # only '캐시워크' Testing...
@@ -301,11 +332,13 @@ if __name__ == '__main__':
             for day_answer in answer_list:
                 write_check_list = utils.read_folder_list('out/{}'.format(today_date))
                 new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로!'
-                exists_check, wrote_time, postId = wrote_check(write_check_list, new_title, today_date)
+                exists_check, title_check, wrote_time, postId = wrote_check(write_check_list, new_title, today_date)
+                if not title_check is False:
+                    new_title = title_check
                 if exists_check:
-                    if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 30:
-                        update_html = create_html(html_path, folder, quiz_folder, day_answer)
-                        blog_update('tastediary', '1037142', new_title, update_html, 'tag', today_date, now_time, postId)
+                    # if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 30:
+                    update_html = create_html(html_path, folder, quiz_folder, day_answer)
+                    blog_update('tastediary', '1037142', new_title, update_html, 'tag', today_date, now_time, postId)
                 else:
                     new_html = create_html(html_path, folder, quiz_folder, day_answer)
                     # category id '1037142' - 배부른 소크라테스 - 돈버는 캐시워크

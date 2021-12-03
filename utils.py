@@ -2,6 +2,7 @@ import os
 import errno
 import json
 
+
 def check_folder(folder):
     try:
         if not(os.path.isdir(folder)):
@@ -98,6 +99,16 @@ def hour_to_minutes(str):
     minutes = int(str[1])
     total_min = hour * 60 + minutes
     return total_min
+
+
+def find_original_title(str, pre, post, ext):
+    pre_text = pre
+    post_answer_text = post
+    json_ext = ext
+    str = str.split(pre_text)
+    str = str[1].split(json_ext)[0]
+    str = str.split(post_answer_text)[0]
+    return str
 
 
 def read_ads():
