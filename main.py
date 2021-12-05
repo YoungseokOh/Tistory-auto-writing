@@ -241,8 +241,8 @@ def blog_upload(blog_name, uploadedfile_path, now_time):
         print(json_text)
 
 
-def wrote_check(wrote_list, title, today_date):
-    pre_text = 'blog_write_tastediary_1037142_'
+def wrote_check(wrote_list, category_id, title, today_date):
+    pre_text = 'blog_write_tastediary_{}_'.format(category_id)
     post_answer_text = ' 빠른 정답 확인 여기로!'
     json_ext = '.json'
     for wrote_name in wrote_list:
@@ -279,6 +279,19 @@ def wrote_check(wrote_list, title, today_date):
                     return True, sp_wrote_name + post_answer_text, wrote_json['time'], wrote_json['tistory']['postId']
             else:
                 continue
+        elif len(title_words_list) == len(wrote_name_words_list):
+            count = 0
+            for w_words in wrote_name_words_list:
+                for t_words in title_words_list:
+                    if w_words == t_words:
+                        count += 1
+                    else:
+                        continue
+            poe = count / len(title_words_list)
+            if poe > 0.71:
+                wrote_json = utils.json_load(
+                    'out/{}/{}{}{}'.format(today_date, pre_text, sp_wrote_name + post_answer_text, json_ext))
+                return True, sp_wrote_name + post_answer_text, wrote_json['time'], wrote_json['tistory']['postId']
         elif title in sp_wrote_name:
             wrote_json = utils.json_load(
                 'out/{}/{}{}{}'.format(today_date, pre_text, title + post_answer_text, json_ext))
@@ -288,16 +301,16 @@ def wrote_check(wrote_list, title, today_date):
     return False, False, None, None
 
 
-def create_html(html_path, main_folder, quiz_folder, day_answer):
+def create_html(html_path, main_folder, quiz_folder, day_answer, img_name):
     h = open(html_path + '/' + main_folder + '.html', 'r+', encoding='UTF-8')
     f = open(os.path.join(quiz_folder, day_answer), encoding="UTF-8-sig")
     answer = json.loads(f.read())
     attach = utils.create_qa(answer)
     html = h.read()
     ads = utils.read_ads()
-    img_url = blog_upload('tastediary', './jpg/cashwork.jpg', now_time)
+    img_url = blog_upload('tastediary', './jpg/{}.jpg'.format(img_name), now_time)
     html = html.format(attach=attach, img=img_url, ads=ads)
-    print(html)
+    # print(html)
     h.close()
     f.close()
     return html
@@ -305,45 +318,71 @@ def create_html(html_path, main_folder, quiz_folder, day_answer):
 
 if __name__ == '__main__':
     # Main Path
-    main_path = './answer/'
-    # date_str -> "%y-%m-%d" or date.today()
-    date_str = "2021-12-03"
-    # date_str = date.today()
-    if date_str.__class__.__name__ == 'date':
-        today_date = date_str
-    else:
-        today_date = datetime.strptime(date_str, "%Y-%m-%d")
-        today_date = today_date.date()
-    # Create out folder
-    if not utils.check_exist('out/{}'.format(today_date)):
-        utils.make_folder('out/{}'.format(today_date))
-    # Crawling
-    # crawling.main(today_date)
-    answer_folder_list = utils.read_folder_list(main_path)
-    for folder in answer_folder_list:
-        # only '캐시워크' Testing...
-        if '캐시워크' not in folder:
-            continue
+    while(True):
+        main_path = './answer/'
+        # date_str -> "%y-%m-%d" or date.today()
+        # date_str = "2021-12-05"
+        date_str = date.today()
+        if date_str.__class__.__name__ == 'date':
+            today_date = date_str
         else:
-            html_path = os.path.join(main_path, folder)
-            quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
-            answer_list = utils.read_folder_list(quiz_folder)
-            now_time = datetime.now().strftime("%H:%M")
-            for day_answer in answer_list:
-                write_check_list = utils.read_folder_list('out/{}'.format(today_date))
-                new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로!'
-                exists_check, title_check, wrote_time, postId = wrote_check(write_check_list, new_title, today_date)
-                if not title_check is False:
-                    new_title = title_check
-                if exists_check:
-                    # if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 30:
-                    update_html = create_html(html_path, folder, quiz_folder, day_answer)
-                    blog_update('tastediary', '1037142', new_title, update_html, 'tag', today_date, now_time, postId)
-                else:
-                    new_html = create_html(html_path, folder, quiz_folder, day_answer)
-                    # category id '1037142' - 배부른 소크라테스 - 돈버는 캐시워크
-                    blog_write('tastediary', '1037142', new_title, new_html, 'tag', today_date, now_time)
-                # time.sleep(120)
+            today_date = datetime.strptime(date_str, "%Y-%m-%d")
+            today_date = today_date.date()
+        # Create out folder
+        if not utils.check_exist('out/{}'.format(today_date)):
+            utils.make_folder('out/{}'.format(today_date))
+        # Crawling
+        crawling.main(today_date)
+        answer_folder_list = utils.read_folder_list(main_path)
+        for folder in answer_folder_list:
+            # only '캐시워크' Testing...
+            if folder == '캐시워크 돈버는퀴즈':
+                html_path = os.path.join(main_path, folder)
+                quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
+                answer_list = utils.read_folder_list(quiz_folder)
+                now_time = datetime.now().strftime("%H:%M")
+                for day_answer in answer_list:
+                    write_check_list = utils.read_folder_list('out/{}'.format(today_date))
+                    new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로!'
+                    exists_check, title_check, wrote_time, postId = wrote_check(write_check_list, '1037142', new_title, today_date)
+                    if not title_check is False:
+                        new_title = title_check
+                    if exists_check:
+                        # if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 29:
+                        update_html = create_html(html_path, folder, quiz_folder, day_answer, 'cashwork')
+                        blog_update('tastediary', '1037142', new_title, update_html, 'tag', today_date, now_time,
+                                    postId)
+                    else:
+                        new_html = create_html(html_path, folder, quiz_folder, day_answer, 'cashwork')
+                        # category id '1037142' - 배부른 소크라테스 - 돈버는 캐시워크
+                        blog_write('tastediary', '1037142', new_title, new_html, 'tag', today_date, now_time)
+            if folder == 'OK캐쉬백 오퀴즈':
+                html_path = os.path.join(main_path, folder)
+                quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
+                answer_list = utils.read_folder_list(quiz_folder)
+                now_time = datetime.now().strftime("%H:%M")
+                for day_answer in answer_list:
+                    write_check_list = utils.read_folder_list('out/{}'.format(today_date))
+                    new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로!'
+                    exists_check, title_check, wrote_time, postId = wrote_check(write_check_list, '1039667', new_title, today_date)
+                    if not title_check is False:
+                        new_title = title_check
+                    if exists_check:
+                        # if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 29:
+                        update_html = create_html(html_path, folder, quiz_folder, day_answer, 'okcash')
+                        blog_update('tastediary', '1039667', new_title, update_html, 'tag', today_date, now_time,
+                                    postId)
+                    else:
+                        new_html = create_html(html_path, folder, quiz_folder, day_answer, 'okcash')
+                        # category id '1039667' - 배부른 소크라테스 - OK캐쉬백 오퀴즈
+                        blog_write('tastediary', '1039667', new_title, new_html, 'tag', today_date, now_time)
+            else:
+                continue
+        print(f'Work is done.')
+        print(f'go to sleep... current_time : {now_time}')
+        time.sleep(2100)
+        print(f'I wake up! current_time : {now_time}')
+        print(f'Crawling start.\n')
 
     # utils.check_folder(origin)
     # 계정 블로그 정보들 읽기

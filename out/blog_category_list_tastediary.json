@@ -26,6 +26,14 @@
                     "name": "돈버는퀴즈 캐시워크",
                     "parent": "",
                     "label": "돈버는퀴즈 캐시워크",
+                    "entries": "42",
+                    "entriesInLogin": "44"
+                },
+                {
+                    "id": "1039667",
+                    "name": "OK캐쉬백 오퀴즈",
+                    "parent": "",
+                    "label": "OK캐쉬백 오퀴즈",
                     "entries": "0",
                     "entriesInLogin": "0"
                 }
