@@ -275,10 +275,14 @@ def wrote_check(wrote_list, category_id, title, today_date):
                         else:
                             continue
                 poe = count / len(title_words_list)
-                if poe > 0.51:
+                if poe > 0.81:
                     wrote_json = utils.json_load(
                         'out/{}/{}{}{}'.format(today_date, pre_text, sp_wrote_name + post_answer_text, json_ext))
                     return True, sp_wrote_name + post_answer_text, wrote_json['time'], wrote_json['tistory']['postId']
+                else:
+                    wrote_json = utils.json_load(
+                        'out/{}/{}{}{}'.format(today_date, pre_text, title + post_answer_text, json_ext))
+                    return True, False, wrote_json['time'], wrote_json['tistory']['postId']
             else:
                 continue
         elif len(title_words_list) == len(wrote_name_words_list):
@@ -290,10 +294,14 @@ def wrote_check(wrote_list, category_id, title, today_date):
                     else:
                         continue
             poe = count / len(title_words_list)
-            if poe > 0.71:
+            if poe > 0.81:
                 wrote_json = utils.json_load(
                     'out/{}/{}{}{}'.format(today_date, pre_text, sp_wrote_name + post_answer_text, json_ext))
                 return True, sp_wrote_name + post_answer_text, wrote_json['time'], wrote_json['tistory']['postId']
+            else:
+                wrote_json = utils.json_load(
+                    'out/{}/{}{}{}'.format(today_date, pre_text, title + post_answer_text, json_ext))
+                return True, False, wrote_json['time'], wrote_json['tistory']['postId']
         elif title in sp_wrote_name:
             wrote_json = utils.json_load(
                 'out/{}/{}{}{}'.format(today_date, pre_text, title + post_answer_text, json_ext))
@@ -351,14 +359,17 @@ if __name__ == '__main__':
                     if not title_check is False:
                         new_title = title_check
                     if exists_check:
-                        # if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 29:
-                        update_html = create_html(html_path, folder, quiz_folder, day_answer, 'cashwork')
-                        blog_update('tastediary', '1037142', new_title, update_html, 'tag', today_date, now_time,
-                                    postId)
+                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 10:
+                            update_html = create_html(html_path, folder, quiz_folder, day_answer, 'cashwork')
+                            blog_update('tastediary', '1037142', new_title, update_html, 'tag', today_date, now_time,
+                                        postId)
+                            time.sleep(5)
                     else:
                         new_html = create_html(html_path, folder, quiz_folder, day_answer, 'cashwork')
                         # category id '1037142' - 배부른 소크라테스 - 돈버는 캐시워크
                         blog_write('tastediary', '1037142', new_title, new_html, 'tag', today_date, now_time)
+                        time.sleep(5)
+            # only 'OK캐쉬백 오퀴즈' Testing...
             if folder == 'OK캐쉬백 오퀴즈':
                 html_path = os.path.join(main_path, folder)
                 quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
@@ -371,19 +382,21 @@ if __name__ == '__main__':
                     if not title_check is False:
                         new_title = title_check
                     if exists_check:
-                        # if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 29:
-                        update_html = create_html(html_path, folder, quiz_folder, day_answer, 'okcash')
-                        blog_update('tastediary', '1039667', new_title, update_html, 'tag', today_date, now_time,
-                                    postId)
+                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 10:
+                            update_html = create_html(html_path, folder, quiz_folder, day_answer, 'okcash')
+                            blog_update('tastediary', '1039667', new_title, update_html, 'tag', today_date, now_time,
+                                        postId)
+                            time.sleep(5)
                     else:
                         new_html = create_html(html_path, folder, quiz_folder, day_answer, 'okcash')
                         # category id '1039667' - 배부른 소크라테스 - OK캐쉬백 오퀴즈
                         blog_write('tastediary', '1039667', new_title, new_html, 'tag', today_date, now_time)
+                        time.sleep(5)
             else:
                 continue
         print(f'Work is done.')
         print(f'go to sleep... current_time : {now_time}')
-        time.sleep(600)
+        time.sleep(450)
         print(f'I wake up! current_time : {now_time}')
         print(f'Crawling start.\n')
 

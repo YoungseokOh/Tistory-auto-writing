@@ -1,3 +1,4 @@
+import time
 import urllib
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
@@ -46,6 +47,7 @@ def day_crawling(url, category_name, today_date, date_text):
     print(title)
     print(questions)
     print(answer)
+    time.sleep(5)
 
 
 def main(today_date):
