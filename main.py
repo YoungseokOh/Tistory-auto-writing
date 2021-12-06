@@ -307,15 +307,16 @@ def wrote_check(wrote_list, category_id, title, today_date):
     return False, False, None, None
 
 
-def create_html(html_path, main_folder, quiz_folder, day_answer, img_name):
+def create_html(html_path, main_folder, quiz_folder, day_answer, img_name, category_id, today_date):
     h = open(html_path + '/' + main_folder + '.html', 'r+', encoding='UTF-8')
     f = open(os.path.join(quiz_folder, day_answer), encoding="UTF-8-sig")
     answer = json.loads(f.read())
     attach = utils.create_qa(answer)
     html = h.read()
     ads = utils.read_ads()
+    other_answer = utils.check_other_answers(category_id, today_date)
     img_url = blog_upload('tastediary', './jpg/{}.jpg'.format(img_name), now_time)
-    html = html.format(attach=attach, img=img_url, ads=ads)
+    html = html.format(attach=attach, img=img_url, ads=ads, other_answer=other_answer)
     # print(html)
     h.close()
     f.close()
@@ -327,7 +328,7 @@ if __name__ == '__main__':
     while(True):
         main_path = './answer/'
         # date_str -> "%y-%m-%d" or date.today()
-        # date_str = "2021-12-05"
+        # date_str = "2021-12-06"
         date_str = date.today()
         if date_str.__class__.__name__ == 'date':
             today_date = date_str
@@ -338,7 +339,7 @@ if __name__ == '__main__':
         if not utils.check_exist('out/{}'.format(today_date)):
             utils.make_folder('out/{}'.format(today_date))
         # Crawling
-        # crawling.main(today_date)
+        crawling.main(today_date)
         answer_folder_list = utils.read_folder_list(main_path)
         for folder in answer_folder_list:
             # only '캐시워크' Testing...
@@ -356,12 +357,14 @@ if __name__ == '__main__':
                         new_title = title_check
                     if exists_check:
                         if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 10:
-                            update_html = create_html(html_path, folder, quiz_folder, day_answer, 'cashwork')
+                            update_html = create_html(html_path, folder, quiz_folder, day_answer,
+                                                      'cashwork', '1037142', today_date)
                             blog_update('tastediary', '1037142', new_title, update_html, 'tag', today_date, now_time,
                                         postId)
                             time.sleep(5)
                     else:
-                        new_html = create_html(html_path, folder, quiz_folder, day_answer, 'cashwork')
+                        new_html = create_html(html_path, folder, quiz_folder, day_answer,
+                                               'cashwork', '1037142', today_date)
                         # category id '1037142' - 배부른 소크라테스 - 돈버는 캐시워크
                         blog_write('tastediary', '1037142', new_title, new_html, 'tag', today_date, now_time)
                         time.sleep(5)
@@ -379,12 +382,14 @@ if __name__ == '__main__':
                         new_title = title_check
                     if exists_check:
                         if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 10:
-                            update_html = create_html(html_path, folder, quiz_folder, day_answer, 'okcash')
+                            update_html = create_html(html_path, folder, quiz_folder, day_answer,
+                                                      'okcash', '1039667', today_date)
                             blog_update('tastediary', '1039667', new_title, update_html, 'tag', today_date, now_time,
                                         postId)
                             time.sleep(5)
                     else:
-                        new_html = create_html(html_path, folder, quiz_folder, day_answer, 'okcash')
+                        new_html = create_html(html_path, folder, quiz_folder, day_answer,
+                                               'okcash', '1039667', today_date)
                         # category id '1039667' - 배부른 소크라테스 - OK캐쉬백 오퀴즈
                         blog_write('tastediary', '1039667', new_title, new_html, 'tag', today_date, now_time)
                         time.sleep(5)

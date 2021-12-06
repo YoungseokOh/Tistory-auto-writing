@@ -146,3 +146,22 @@ def read_ads():
           '<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>'
     return ads
 
+
+def check_other_answers(category_id, today_date):
+    other_answer = ""
+    json_ext = '.json'
+    oa_format = '<p data-ke-size='"size25"' align='"center"' style='"font-size: 25pt; font-family: 'Nanum Gothic';"'><a href='"{}"' target = '"_blank"' rel = '"noopener"'>{}</a></p>'
+    space = '<p data-ke-size='"size11"'>&nbsp;</p>'
+    pre_text = 'blog_write_tastediary_{}_'.format(category_id)
+    other_answer_list = read_folder_list('out/{}'.format(today_date))
+    if not other_answer_list:
+        return other_answer
+    for o_answer in other_answer_list:
+        if pre_text in o_answer:
+            sp_wrote_name = o_answer.split(pre_text)
+            sp_wrote_name = sp_wrote_name[1].split(json_ext)[0]
+            o_answer_json = json_load('out/{}/{}'.format(today_date, o_answer))
+            other_answer_url = o_answer_json['tistory']['url']
+            other_answer = other_answer + oa_format.format(other_answer_url, sp_wrote_name)
+            other_answer = other_answer + space
+    return other_answer
