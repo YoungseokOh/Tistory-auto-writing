@@ -34,6 +34,8 @@ def day_crawling(url, category_name, today_date, date_text):
             results_count += 1
             continue
     questions = utils.remove_xa0(questions)
+    questions = utils.remove_quo_marks(questions)
+    questions = utils.remove_bracket(questions)
     data = {}
     data['post'] = []
     data['count'] = [len(questions)]

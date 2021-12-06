@@ -50,6 +50,22 @@ def remove_xa0(list):
     return temp_list
 
 
+def remove_quo_marks(list):
+    temp_list = []
+    for i in list:
+        temp = i.replace('"', '')
+        temp_list.append(temp)
+    return temp_list
+
+
+def remove_bracket(list):
+    temp_list = []
+    for i in list:
+        temp = i.replace("(", "").replace(")", "")
+        temp_list.append(temp)
+    return temp_list
+
+
 def remove_slash_nt(str):
     temp_str = str.replace("\n", "")
     str = temp_str.replace("\t", "")

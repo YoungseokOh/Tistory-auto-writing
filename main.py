@@ -260,6 +260,8 @@ def wrote_check(wrote_list, category_id, title, today_date):
                 match_word = re.findall(t_words, sp_wrote_name)
                 if match_word:
                     real_title.append(match_word[0])
+                else:
+                    continue
             new_title = " ".join(real_title)
             if new_title == sp_wrote_name:
                 wrote_json = utils.json_load('out/{}/{}{}{}'.format(today_date, pre_text, new_title + post_answer_text, json_ext))
@@ -344,6 +346,7 @@ if __name__ == '__main__':
                 for day_answer in answer_list:
                     write_check_list = utils.read_folder_list('out/{}'.format(today_date))
                     new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로!'
+                    new_title = new_title.replace("(", "").replace(")", "")
                     exists_check, title_check, wrote_time, postId = wrote_check(write_check_list, '1037142', new_title, today_date)
                     if not title_check is False:
                         new_title = title_check
@@ -380,7 +383,7 @@ if __name__ == '__main__':
                 continue
         print(f'Work is done.')
         print(f'go to sleep... current_time : {now_time}')
-        time.sleep(2100)
+        time.sleep(600)
         print(f'I wake up! current_time : {now_time}')
         print(f'Crawling start.\n')
 
