@@ -280,9 +280,7 @@ def wrote_check(wrote_list, category_id, title, today_date):
                         'out/{}/{}{}{}'.format(today_date, pre_text, sp_wrote_name + post_answer_text, json_ext))
                     return True, sp_wrote_name + post_answer_text, wrote_json['time'], wrote_json['tistory']['postId']
                 else:
-                    wrote_json = utils.json_load(
-                        'out/{}/{}{}{}'.format(today_date, pre_text, title + post_answer_text, json_ext))
-                    return True, False, wrote_json['time'], wrote_json['tistory']['postId']
+                    False, False, None, None
             else:
                 continue
         elif len(title_words_list) == len(wrote_name_words_list):
@@ -299,9 +297,7 @@ def wrote_check(wrote_list, category_id, title, today_date):
                     'out/{}/{}{}{}'.format(today_date, pre_text, sp_wrote_name + post_answer_text, json_ext))
                 return True, sp_wrote_name + post_answer_text, wrote_json['time'], wrote_json['tistory']['postId']
             else:
-                wrote_json = utils.json_load(
-                    'out/{}/{}{}{}'.format(today_date, pre_text, title + post_answer_text, json_ext))
-                return True, False, wrote_json['time'], wrote_json['tistory']['postId']
+                False, False, None, None
         elif title in sp_wrote_name:
             wrote_json = utils.json_load(
                 'out/{}/{}{}{}'.format(today_date, pre_text, title + post_answer_text, json_ext))
@@ -342,7 +338,7 @@ if __name__ == '__main__':
         if not utils.check_exist('out/{}'.format(today_date)):
             utils.make_folder('out/{}'.format(today_date))
         # Crawling
-        crawling.main(today_date)
+        # crawling.main(today_date)
         answer_folder_list = utils.read_folder_list(main_path)
         for folder in answer_folder_list:
             # only '캐시워크' Testing...
