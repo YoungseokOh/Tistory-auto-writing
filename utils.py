@@ -28,6 +28,13 @@ def read_folder_list(path):
     return folder_list
 
 
+def read_sort_timelist(path):
+    filelist = [s for s in os.listdir(path)
+                if os.path.isfile(os.path.join(path, s))]
+    filelist.sort(key=lambda s: os.path.getmtime(os.path.join(path, s)))
+    return filelist
+
+
 def check_exist(path):
     return os.path.exists(path)
 
@@ -106,6 +113,12 @@ def create_qa(answer):
 def json_load(path):
     json_text = open(path).read()
     dict_json = json.loads(json_text)
+    return dict_json
+
+
+def json_load_utf8(path):
+    with open(path, "r", encoding="utf-8") as fp:
+        dict_json = json.load(fp)
     return dict_json
 
 

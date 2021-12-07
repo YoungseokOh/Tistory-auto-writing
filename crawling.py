@@ -1,5 +1,6 @@
 import time
 import urllib
+import socket
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 import utils
@@ -9,6 +10,7 @@ import json
 
 
 def day_crawling(url, category_name, today_date, date_text):
+    socket.setdefaulttimeout(20)
     test_url = url
     req = requests.get(test_url)
     if req.status_code == 404:
@@ -42,12 +44,11 @@ def day_crawling(url, category_name, today_date, date_text):
     data['count'] = [len(questions)]
     for n in range(len(questions)):
         data['post'].append({"question": questions[n], "answer":answer[n]})
-    with open("./answer/{}/{}/{}.json".format(category_name, today_date, title), 'w', encoding='UTF-8-sig') as outfile:
+    with open("./answer/{}/{}/{}.json".format(category_name, today_date, title), 'w', encoding='utf-8') as outfile:
         json.dump(data, outfile, ensure_ascii=False, indent=4)
     print(title)
     print(questions)
     print(answer)
-    time.sleep(5)
 
 
 def main(today_date):

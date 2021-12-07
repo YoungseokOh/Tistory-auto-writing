@@ -346,17 +346,20 @@ if __name__ == '__main__':
             if folder == '캐시워크 돈버는퀴즈':
                 html_path = os.path.join(main_path, folder)
                 quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
-                answer_list = utils.read_folder_list(quiz_folder)
+                answer_list = utils.read_sort_timelist(quiz_folder)
                 now_time = datetime.now().strftime("%H:%M")
                 for day_answer in answer_list:
                     write_check_list = utils.read_folder_list('out/{}'.format(today_date))
+                    write_check_json = utils.json_load_utf8('answer/{}/{}/{}'.format(folder, today_date, day_answer))
+                    if not write_check_json['post'][0]['question']:
+                        continue
                     new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로!'
                     new_title = new_title.replace("(", "").replace(")", "")
                     exists_check, title_check, wrote_time, postId = wrote_check(write_check_list, '1037142', new_title, today_date)
                     if not title_check is False:
                         new_title = title_check
                     if exists_check:
-                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 10:
+                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 5:
                             update_html = create_html(html_path, folder, quiz_folder, day_answer,
                                                       'cashwork', '1037142', today_date)
                             blog_update('tastediary', '1037142', new_title, update_html, 'tag', today_date, now_time,
@@ -372,16 +375,19 @@ if __name__ == '__main__':
             if folder == 'OK캐쉬백 오퀴즈':
                 html_path = os.path.join(main_path, folder)
                 quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
-                answer_list = utils.read_folder_list(quiz_folder)
+                answer_list = utils.read_sort_timelist(quiz_folder)
                 now_time = datetime.now().strftime("%H:%M")
                 for day_answer in answer_list:
                     write_check_list = utils.read_folder_list('out/{}'.format(today_date))
+                    write_check_json = utils.json_load_utf8('answer/{}/{}/{}'.format(folder, today_date, day_answer))
+                    if not write_check_json['post'][0]['question']:
+                        continue
                     new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로!'
                     exists_check, title_check, wrote_time, postId = wrote_check(write_check_list, '1039667', new_title, today_date)
                     if not title_check is False:
                         new_title = title_check
                     if exists_check:
-                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 10:
+                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 5:
                             update_html = create_html(html_path, folder, quiz_folder, day_answer,
                                                       'okcash', '1039667', today_date)
                             blog_update('tastediary', '1039667', new_title, update_html, 'tag', today_date, now_time,
@@ -397,7 +403,7 @@ if __name__ == '__main__':
                 continue
         print(f'Work is done.')
         print(f'go to sleep... current_time : {now_time}')
-        time.sleep(450)
+        time.sleep(420)
         print(f'I wake up! current_time : {now_time}')
         print(f'Crawling start.\n')
 
