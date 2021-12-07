@@ -328,7 +328,7 @@ if __name__ == '__main__':
     while(True):
         main_path = './answer/'
         # date_str -> "%y-%m-%d" or date.today()
-        # date_str = "2021-12-06"
+        # date_str = "2021-12-07"
         date_str = date.today()
         if date_str.__class__.__name__ == 'date':
             today_date = date_str
