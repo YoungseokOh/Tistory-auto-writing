@@ -330,6 +330,23 @@ if __name__ == '__main__':
         # date_str -> "%y-%m-%d" or date.today()
         # date_str = "2021-12-07"
         date_str = date.today()
+        now_time_init = datetime.now().strftime("%H:%M")
+        morning = '09:00'
+        night = '21:00'
+        morning_min = utils.hour_to_minutes(morning)
+        night_min = utils.hour_to_minutes(night)
+        now_min = utils.hour_to_minutes(now_time_init)
+        if now_min >= night_min:
+            print(f'I am gonna go to bed... current_time : {now_time_init}')
+            loop_forever = True
+            while loop_forever:
+                now_time_loop = datetime.now().strftime("%H:%M")
+                now_min_sleeping = utils.hour_to_minutes(now_time_loop)
+                print(f'Sleeping...zZ ---[current_time]--- : {now_time_loop}')
+                time.sleep(60)
+                if morning_min <= now_min_sleeping <= night_min:
+                    loop_forever = False
+                    print(f'I wake up! ---[current_time]--- : {now_time_loop}')
         if date_str.__class__.__name__ == 'date':
             today_date = date_str
         else:
@@ -339,6 +356,7 @@ if __name__ == '__main__':
         if not utils.check_exist('out/{}'.format(today_date)):
             utils.make_folder('out/{}'.format(today_date))
         # Crawling
+        print(f'Crawling start.\n')
         crawling.main(today_date)
         answer_folder_list = utils.read_folder_list(main_path)
         for folder in answer_folder_list:
@@ -402,10 +420,9 @@ if __name__ == '__main__':
             else:
                 continue
         print(f'Work is done.')
-        print(f'go to sleep... current_time : {now_time}')
+        print(f'I am gonna take a break... current_time : {now_time}')
         time.sleep(360)
-        print(f'I wake up! current_time : {now_time}')
-        print(f'Crawling start.\n')
+        print(f'Working time! current_time : {now_time}')
 
     # utils.check_folder(origin)
     # 계정 블로그 정보들 읽기
