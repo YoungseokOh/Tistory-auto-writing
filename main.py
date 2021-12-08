@@ -314,9 +314,9 @@ def create_html(html_path, main_folder, quiz_folder, day_answer, img_name, categ
     attach = utils.create_qa(answer)
     html = h.read()
     ads = utils.read_ads()
-    other_answer = utils.check_other_answers(category_id, today_date)
+    # other_answer = utils.check_other_answers(category_id, today_date)
     img_url = blog_upload('tastediary', './jpg/{}.jpg'.format(img_name), now_time)
-    html = html.format(attach=attach, img=img_url, ads=ads, other_answer=other_answer)
+    html = html.format(attach=attach, img=img_url, ads=ads)
     # print(html)
     h.close()
     f.close()
@@ -403,7 +403,7 @@ if __name__ == '__main__':
                 continue
         print(f'Work is done.')
         print(f'go to sleep... current_time : {now_time}')
-        time.sleep(420)
+        time.sleep(360)
         print(f'I wake up! current_time : {now_time}')
         print(f'Crawling start.\n')
 
