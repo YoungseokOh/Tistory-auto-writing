@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import os
 import app_config
 import utils
-import crawling
+import crawling_quiz
 import time
 import re
 from datetime import date, datetime
@@ -355,9 +355,9 @@ if __name__ == '__main__':
         # Create out folder
         if not utils.check_exist('out/{}'.format(today_date)):
             utils.make_folder('out/{}'.format(today_date))
-        # Crawling
+        # Crawling quiz
         print(f'Crawling start.\n')
-        crawling.main(today_date)
+        crawling_quiz.main(today_date)
         answer_folder_list = utils.read_folder_list(main_path)
         for folder in answer_folder_list:
             # only '캐시워크' Testing...
