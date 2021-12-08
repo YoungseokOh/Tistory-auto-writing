@@ -10,7 +10,7 @@ from datetime import date, datetime
 import json
 
 
-MAX_RETRY = 5
+MAX_RETRY = 10
 
 
 def get_html(html_url, timeout=10, decode='utf-8'):
@@ -20,6 +20,7 @@ def get_html(html_url, timeout=10, decode='utf-8'):
                 return response.read()
         except Exception as e:
             logging.warning(str(e) + ',html_url:{0}'.format(html_url))
+            print(f'Connection warning! tried : {tries}')
             if tries < (MAX_RETRY - 1):
                 continue
             else:
