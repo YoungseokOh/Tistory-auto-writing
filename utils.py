@@ -73,8 +73,9 @@ def remove_bracket(list):
     return temp_list
 
 
-def remove_slash_nt(str):
+def remove_slash_ntr(str):
     temp_str = str.replace("\n", "")
+    temp_str = temp_str.replace("\r", "")
     str = temp_str.replace("\t", "")
     str = str.split("(")[0]
     return str
@@ -178,3 +179,10 @@ def check_other_answers(category_id, today_date):
             other_answer = other_answer + oa_format.format(other_answer_url, sp_wrote_name)
             other_answer = other_answer + space
     return other_answer
+
+
+# Duplicate from main(quiz)
+def json_parsing(response_json):
+    json_text = json.dumps(response_json, indent=4, ensure_ascii=False)
+    return json_text
+
