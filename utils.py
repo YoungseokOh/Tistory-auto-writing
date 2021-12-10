@@ -91,17 +91,18 @@ def real_answer(str):
 
 def create_fortune(day_fortune):
     attach = ""
-    p_open = "<p style="'"text-align: center; font-size: 12pt;"'" data-ke-size="'"size12"'">"
+    p_open = "<p style="'"text-align: center; font-size: 15pt; color : #00B050; font-weight: bold;"'" data-ke-size="'"size15"'">{year}년생"
     p_close = "</p>"
-    answer_open = "<p style="'"text-align: center; font-size: 18pt;"'" data-ke-size="'"size18"'"><b>정답은<span style="'"color: #115CB4;"'">" \
-                  "<span>&nbsp;{ans}</span><span>&nbsp;</span></span>입니다.</b></p>"
-    answer_close = "</p>"
+    zodiac_open = "<p style="'"text-align: center; font-size: 16pt;"'" data-ke-size="'"size16"'"><b>{content}</b>"
+    zodiac_close = "</p>"
     k_count = 0
     for k in day_fortune.keys():
-        day_fortune['{}'.format(list(k)[k_count])]
+        attach = attach + p_open.format(year=k)
+        attach = attach + p_close
+        attach = attach + zodiac_open.format(content=day_fortune['{}'.format(k)])
+        attach = attach + zodiac_close
         k_count += 1
-
-
+    return attach
 
 
 def create_qa(answer):
