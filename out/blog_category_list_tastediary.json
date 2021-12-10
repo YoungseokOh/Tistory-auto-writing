@@ -26,14 +26,22 @@
                     "name": "돈버는퀴즈 캐시워크",
                     "parent": "",
                     "label": "돈버는퀴즈 캐시워크",
-                    "entries": "42",
-                    "entriesInLogin": "44"
+                    "entries": "107",
+                    "entriesInLogin": "109"
                 },
                 {
                     "id": "1039667",
                     "name": "OK캐쉬백 오퀴즈",
                     "parent": "",
                     "label": "OK캐쉬백 오퀴즈",
+                    "entries": "9",
+                    "entriesInLogin": "9"
+                },
+                {
+                    "id": "1040594",
+                    "name": "오늘의 운세",
+                    "parent": "",
+                    "label": "오늘의 운세",
                     "entries": "0",
                     "entriesInLogin": "0"
                 }

@@ -85,7 +85,7 @@ def main(today_date):
     bs_Test = BeautifulSoup(blog_list_read, 'html.parser')
     category_len = len(bs_Test.find_all('a', attrs={'class': 'link_item'}))
     for cate_num in range(category_len):
-        category_name = utils.remove_slash_nt(bs_Test.find_all('a', attrs={'class': 'link_item'})[cate_num].getText())
+        category_name = utils.remove_slash_ntr(bs_Test.find_all('a', attrs={'class': 'link_item'})[cate_num].getText())
         # only OKcashbag & Cashwork test...
         if "OK캐쉬백 오퀴즈" in category_name or "캐시워크 돈버는퀴즈" in category_name:
             print(category_name)

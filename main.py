@@ -6,6 +6,7 @@ import os
 import app_config
 import utils
 import crawling_quiz
+import crawling_fortune
 import time
 import re
 from datetime import date, datetime
@@ -173,7 +174,7 @@ def blog_write(blog_name, category_id, title, content, tag, today_date, now_time
 
 def blog_update(blog_name, category_id, title, content, tag, today_date, now_time, postId):
     url = 'https://www.tistory.com/apis/post/modify'
-    visibility = 3
+    visibility = 0
     published = ''
     slogan = ''
     acceptComment = 1
@@ -307,16 +308,34 @@ def wrote_check(wrote_list, category_id, title, today_date):
     return False, False, None, None
 
 
-def create_html(html_path, main_folder, quiz_folder, day_answer, img_name, category_id, today_date):
+def create_quiz_html(html_path, main_folder, quiz_folder, day_answer, img_name, category_id, today_date):
     h = open(html_path + '/' + main_folder + '.html', 'r+', encoding='UTF-8')
     f = open(os.path.join(quiz_folder, day_answer), encoding="UTF-8-sig")
     answer = json.loads(f.read())
     attach = utils.create_qa(answer)
     html = h.read()
     ads = utils.read_ads()
-    # other_answer = utils.check_other_answers(category_id, today_date)
+    other_answer = utils.check_other_answers(category_id, today_date)
     img_url = blog_upload('tastediary', './jpg/{}.jpg'.format(img_name), now_time)
-    html = html.format(attach=attach, img=img_url, ads=ads)
+    html = html.format(attach=attach, img=img_url, ads=ads, other_answer=other_answer)
+    # print(html)
+    h.close()
+    f.close()
+    return html
+
+
+def create_fortune_html(main_folder, daily_path, day_fortune, today_date):
+    h = open(main_folder + os.path.join('/', 'fortune.html'), 'r+', encoding='UTF-8')
+    f = open(os.path.join(daily_path, day_fortune), encoding="UTF-8-sig")
+    answer = json.loads(f.read())
+    attach = utils.create_fortune(answer)
+    # "id": "1040594",
+    # "name": "오늘의 운세",
+    html = h.read()
+    ads = utils.read_ads()
+    now_time = datetime.now().strftime("%H:%M")
+    img_url = blog_upload('tastediary', './jpg/fortune.jpg', now_time)
+    html = html.format(attach=attach, img=img_url, ads=ads, today_date=today_date)
     # print(html)
     h.close()
     f.close()
@@ -325,8 +344,11 @@ def create_html(html_path, main_folder, quiz_folder, day_answer, img_name, categ
 
 if __name__ == '__main__':
     # Main Path
+    fortune_5min_count = 0
+    fortune_day_flag = 0 # '0' means not writing, '1' means wrote
     while(True):
-        main_path = './answer/'
+        quiz_answer_path = './answer/'
+        fortune_main_path = './fortune/'
         # date_str -> "%y-%m-%d" or date.today()
         # date_str = "2021-12-07"
         date_str = date.today()
@@ -358,12 +380,21 @@ if __name__ == '__main__':
         # Crawling quiz
         print(f'Crawling start.\n')
         crawling_quiz.main(today_date)
-        answer_folder_list = utils.read_folder_list(main_path)
+        crawling_fortune.main(today_date)
+        answer_folder_list = utils.read_folder_list(quiz_answer_path)
+        fortune_daily_path = fortune_main_path + os.path.join('/', datetime.strftime(today_date, "%Y-%m-%d"))
+        fortune_daily_list = utils.read_folder_list(fortune_daily_path)
+        if fortune_5min_count == 0:
+            # Choice one form today's zodiac
+            new_html = create_fortune_html(fortune_main_path,
+                                           fortune_daily_path,
+                                           fortune_daily_list[0],
+                                           today_date)
         for folder in answer_folder_list:
-            # only '캐시워크' Testing...
+            # only '캐시워크' Testing ...
             if folder == '캐시워크 돈버는퀴즈':
-                html_path = os.path.join(main_path, folder)
-                quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
+                html_path = os.path.join(quiz_answer_path, folder)
+                quiz_folder = os.path.join(os.path.join(quiz_answer_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
                 answer_list = utils.read_sort_timelist(quiz_folder)
                 now_time = datetime.now().strftime("%H:%M")
                 for day_answer in answer_list:
@@ -378,21 +409,21 @@ if __name__ == '__main__':
                         new_title = title_check
                     if exists_check:
                         if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 5:
-                            update_html = create_html(html_path, folder, quiz_folder, day_answer,
+                            update_html = create_quiz_html(html_path, folder, quiz_folder, day_answer,
                                                       'cashwork', '1037142', today_date)
                             blog_update('tastediary', '1037142', new_title, update_html, 'tag', today_date, now_time,
                                         postId)
                             time.sleep(5)
                     else:
-                        new_html = create_html(html_path, folder, quiz_folder, day_answer,
+                        new_html = create_quiz_html(html_path, folder, quiz_folder, day_answer,
                                                'cashwork', '1037142', today_date)
                         # category id '1037142' - 배부른 소크라테스 - 돈버는 캐시워크
                         blog_write('tastediary', '1037142', new_title, new_html, 'tag', today_date, now_time)
                         time.sleep(5)
             # only 'OK캐쉬백 오퀴즈' Testing...
             if folder == 'OK캐쉬백 오퀴즈':
-                html_path = os.path.join(main_path, folder)
-                quiz_folder = os.path.join(os.path.join(main_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
+                html_path = os.path.join(quiz_answer_path, folder)
+                quiz_folder = os.path.join(os.path.join(quiz_answer_path, folder), datetime.strftime(today_date, "%Y-%m-%d"))
                 answer_list = utils.read_sort_timelist(quiz_folder)
                 now_time = datetime.now().strftime("%H:%M")
                 for day_answer in answer_list:
@@ -406,13 +437,13 @@ if __name__ == '__main__':
                         new_title = title_check
                     if exists_check:
                         if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 5:
-                            update_html = create_html(html_path, folder, quiz_folder, day_answer,
+                            update_html = create_quiz_html(html_path, folder, quiz_folder, day_answer,
                                                       'okcash', '1039667', today_date)
                             blog_update('tastediary', '1039667', new_title, update_html, 'tag', today_date, now_time,
                                         postId)
                             time.sleep(5)
                     else:
-                        new_html = create_html(html_path, folder, quiz_folder, day_answer,
+                        new_html = create_quiz_html(html_path, folder, quiz_folder, day_answer,
                                                'okcash', '1039667', today_date)
                         # category id '1039667' - 배부른 소크라테스 - OK캐쉬백 오퀴즈
                         blog_write('tastediary', '1039667', new_title, new_html, 'tag', today_date, now_time)
@@ -421,6 +452,7 @@ if __name__ == '__main__':
                 continue
         print(f'Work is done.')
         print(f'I am gonna take a break... current_time : {now_time}')
+        fortune_5min_count += 1
         time.sleep(360)
         print(f'Working time! current_time : {now_time}')
 

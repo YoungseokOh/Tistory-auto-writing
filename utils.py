@@ -89,6 +89,21 @@ def real_answer(str):
     return str
 
 
+def create_fortune(day_fortune):
+    attach = ""
+    p_open = "<p style="'"text-align: center; font-size: 12pt;"'" data-ke-size="'"size12"'">"
+    p_close = "</p>"
+    answer_open = "<p style="'"text-align: center; font-size: 18pt;"'" data-ke-size="'"size18"'"><b>정답은<span style="'"color: #115CB4;"'">" \
+                  "<span>&nbsp;{ans}</span><span>&nbsp;</span></span>입니다.</b></p>"
+    answer_close = "</p>"
+    k_count = 0
+    for k in day_fortune.keys():
+        day_fortune['{}'.format(list(k)[k_count])]
+        k_count += 1
+
+
+
+
 def create_qa(answer):
     attach = ""
     p_open = "<p style="'"text-align: center; font-size: 12pt;"'" data-ke-size="'"size12"'">"

@@ -35,7 +35,7 @@ def main(today_date):
     for z in range(len(chinese_zodiac)):
         fortune_list_url = 'https://sazoo.com/ss/run/sazoo/ddi/result.php?ddi={}'.format(z+1)
         fortune_list_read = get_html(fortune_list_url)
-        bs_Test = BeautifulSoup(fortune_list_read, 'html.parser')
+        bs_Test = BeautifulSoup(fortune_list_read.decode('euc-kr', 'replace'), 'html.parser')
         attrs = {'align' : 'left', 'style' : 'line-height:21px;font-size:12px;color:#4e0101'}
         bs_fortune = bs_Test.find_all('td', attrs=attrs)
         fortune_year_list = []
