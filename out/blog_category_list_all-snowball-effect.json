@@ -1,0 +1,35 @@
+{
+    "tistory": {
+        "status": "200",
+        "item": {
+            "url": "all-snowball-effect",
+            "secondaryUrl": "",
+            "categories": [
+                {
+                    "id": "1005221",
+                    "name": "캐시워크 돈버는퀴즈",
+                    "parent": "",
+                    "label": "캐시워크 돈버는퀴즈",
+                    "entries": "9",
+                    "entriesInLogin": "9"
+                },
+                {
+                    "id": "1010176",
+                    "name": "OK캐쉬백 오퀴즈",
+                    "parent": "",
+                    "label": "OK캐쉬백 오퀴즈",
+                    "entries": "0",
+                    "entriesInLogin": "0"
+                },
+                {
+                    "id": "1010175",
+                    "name": "오늘의 운세",
+                    "parent": "",
+                    "label": "오늘의 운세",
+                    "entries": "0",
+                    "entriesInLogin": "0"
+                }
+            ]
+        }
+    }
+}
