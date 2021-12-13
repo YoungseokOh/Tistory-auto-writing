@@ -31,7 +31,7 @@ def read_folder_list(path):
 def read_sort_timelist(path):
     filelist = [s for s in os.listdir(path)
                 if os.path.isfile(os.path.join(path, s))]
-    filelist.sort(key=lambda s: os.path.getmtime(os.path.join(path, s)))
+    filelist.sort(key=lambda s: os.path.getmtime(os.path.join(path, s)), reverse=True)
     return filelist
 
 

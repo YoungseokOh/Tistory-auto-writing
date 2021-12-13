@@ -308,7 +308,7 @@ def wrote_check(wrote_list, blog_name, category_id, title, today_date, post_answ
     return False, False, None, None
 
 
-def create_quiz_html(html_path, main_folder, quiz_folder, day_answer, img_name, blog_name, category_id, today_date):
+def create_quiz_html(html_path, main_folder, quiz_folder, day_answer, blog_name, img_name, category_id, today_date):
     h = open(html_path + '/' + main_folder + '.html', 'r+', encoding='UTF-8')
     f = open(os.path.join(quiz_folder, day_answer), encoding="UTF-8-sig")
     quiz_img_urls = {'cashwork': 'https://blog.kakaocdn.net/dn/cN9rMx/btrnHSEQp5P/kD5JeD13b8ZS6kXfeXR8t1/img.jpg',
@@ -349,9 +349,14 @@ if __name__ == '__main__':
     # Main Path
     fortune_5min_count = 0
     fortune_day_flag = 0 # '0' means not writing, '1' means wrote
-    blog_infomation = {'blog_name': 'all-snowball-effect',
+    # blog_infomation = {'blog_name': 'all-snowball-effect',
+    #                 'category_name': ['캐시워크 돈버는퀴즈', 'OK캐쉬백 오퀴즈', '오늘의 운세'],
+    #                 'category_id': ['1005221', '1010176', '1010175']}
+
+    blog_infomation = {'blog_name': 'buy-the-dip',
                     'category_name': ['캐시워크 돈버는퀴즈', 'OK캐쉬백 오퀴즈', '오늘의 운세'],
-                    'category_id': ['1005221', '1010176', '1010175']}
+                    'category_id': ['975718', '975719', '975720']}
+
     blog_category = []
     while(True):
         quiz_answer_path = './answer/'
@@ -441,6 +446,7 @@ if __name__ == '__main__':
                     new_title = new_title.replace("(", "").replace(")", "")
                     # Wrote Check
                     exists_check, title_check, wrote_time, postId = wrote_check(write_check_list,
+                                                                                blog_infomation['blog_name'],
                                                                                 blog_infomation['category_id'][0],
                                                                                 new_title,
                                                                                 today_date,
@@ -499,6 +505,7 @@ if __name__ == '__main__':
                     new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로 오세요!'
                     # Wrote Check
                     exists_check, title_check, wrote_time, postId = wrote_check(write_check_list,
+                                                                                blog_infomation['blog_name'],
                                                                                 blog_infomation['category_id'][1],
                                                                                 new_title,
                                                                                 today_date,
