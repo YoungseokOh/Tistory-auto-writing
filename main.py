@@ -328,20 +328,24 @@ def create_quiz_html(html_path, main_folder, quiz_folder, day_answer, blog_name,
 
 
 def create_fortune_html(main_folder, daily_path, day_fortune, today_date):
+    today_date = '{}월{}일'.format(today_date.month, today_date.day)
     h = open(main_folder + os.path.join('/', 'fortune.html'), 'r+', encoding='UTF-8')
-    f = open(os.path.join(daily_path, day_fortune), encoding="UTF-8-sig")
-    answer = json.loads(f.read())
-    attach = utils.create_fortune(answer)
-    zodiac = day_fortune.split('.json')[0]
+    attach = ''
+    for n in day_fortune:
+        h_temp = open(main_folder + os.path.join('/', 'fortune_content.html'), 'r+', encoding='UTF-8')
+        f = open(os.path.join(daily_path, n), encoding="UTF-8-sig")
+        answer = json.loads(f.read())
+        attach_temp = utils.create_fortune(answer)
+        zodiac = n.split('.json')[0]
+        html_temp = h_temp.read()
+        html_temp = html_temp.format(attach=attach_temp, today_date=today_date, zodiac=zodiac)
+        attach = attach + html_temp
+        h_temp.close()
+        f.close()
     html = h.read()
     ads = utils.read_ads()
-    now_time = datetime.now().strftime("%H:%M")
     img_url = 'https://blog.kakaocdn.net/dn/dc2HXv/btrnB8PYqP1/xeApexb4nkwPR5thyRgUr0/img.jpg'
-    # img_url = blog_upload('tastediary', './jpg/fortune.jpg', now_time)
-    html = html.format(attach=attach, img=img_url, ads=ads, today_date=today_date, zodiac=zodiac)
-    # print(html)
-    h.close()
-    f.close()
+    html = html.format(attach=attach, img=img_url, ads=ads, today_date=today_date)
     return html
 
 
@@ -391,7 +395,7 @@ if __name__ == '__main__':
             utils.make_folder('out/{}'.format(today_date))
         print(f'Crawling start.\n')
         # Crawling quiz
-        crawling_quiz.main(today_date)
+        # crawling_quiz.main(today_date)
         if not utils.check_exist('fortune/{}'.format(date_str)):
             utils.make_folder('fortune/{}'.format(date_str))
         # Crawling daily's fortune
@@ -401,35 +405,30 @@ if __name__ == '__main__':
         fortune_daily_path = fortune_main_path + os.path.join('/', datetime.strftime(today_date, "%Y-%m-%d"))
         fortune_daily_list = utils.read_folder_list(fortune_daily_path)
         write_check_list = utils.read_folder_list('out/{}'.format(today_date))
-        if fortune_5min_count == 3:
-            # Choice one from today's zodiac
-            while True:
-                day_fortune = random.choice(fortune_daily_list)
-                today_str_title = '{}월{}일'.format(today_date.month, today_date.day)
-                new_title = '{} {} 오늘의 운세를 알아보자!'.format(today_str_title, day_fortune.split('.json')[0])
-                # Wrote Check
-                exists_check, title_check, wrote_time, postId = wrote_check(write_check_list,
-                                                                            blog_infomation['blog_name'],
-                                                                            blog_infomation['category_id'][2],
-                                                                            new_title,
-                                                                            today_date, ' 오늘의 운세를 알아보자!')
-                if exists_check == True:
-                    pass
-                else:
-                    new_html = create_fortune_html(fortune_main_path,
-                                                   fortune_daily_path,
-                                                   day_fortune,
-                                                   today_date)
-                    now_time = datetime.now().strftime("%H:%M")
-                    # Write
-                    blog_write(blog_infomation['blog_name'],
-                               blog_infomation['category_id'][2],
-                               new_title, new_html,
-                               'tag',
-                               today_date,
-                               now_time)
-                    fortune_5min_count = 0
-                    break
+        day_fortune = random.choice(fortune_daily_list)
+        today_str_title = '{}월{}일'.format(today_date.month, today_date.day)
+        new_title = '{} {} 오늘의 운세를 알아보자!'.format(today_str_title, '띠별')
+        # Wrote Check
+        exists_check, title_check, wrote_time, postId = wrote_check(write_check_list,
+                                                                    blog_infomation['blog_name'],
+                                                                    blog_infomation['category_id'][2],
+                                                                    new_title,
+                                                                    today_date, ' 오늘의 운세를 알아보자!')
+        if exists_check == True:
+            pass
+        else:
+            new_html = create_fortune_html(fortune_main_path,
+                                           fortune_daily_path,
+                                           fortune_daily_list,
+                                           today_date)
+            now_time = datetime.now().strftime("%H:%M")
+            # Write
+            blog_write(blog_infomation['blog_name'],
+                       blog_infomation['category_id'][2],
+                       new_title, new_html,
+                       'tag',
+                       today_date,
+                       now_time)
         for folder in answer_folder_list:
             # only '캐시워크' Testing ...
             if folder == '캐시워크 돈버는퀴즈':
@@ -454,7 +453,7 @@ if __name__ == '__main__':
                     if not title_check is False:
                         new_title = title_check
                     if exists_check:
-                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 5:
+                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 15:
                             update_html = create_quiz_html(html_path,
                                                            folder,
                                                            quiz_folder,
@@ -513,7 +512,7 @@ if __name__ == '__main__':
                     if not title_check is False:
                         new_title = title_check
                     if exists_check:
-                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 5:
+                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 15:
                             update_html = create_quiz_html(html_path,
                                                            folder,
                                                            quiz_folder,

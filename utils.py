@@ -111,7 +111,7 @@ def create_qa(answer):
     p_close = "</p>"
     answer_open = "<p style="'"text-align: center; font-size: 18pt;"'" data-ke-size="'"size18"'"><b>정답은<span style="'"color: #115CB4;"'">" \
                   "<span>&nbsp;{ans}</span><span>&nbsp;</span></span>입니다.</b></p>"
-    answer_close = "</p>"
+    answer_close = "</p><p></p>"
     for n in range(int(answer['count'][0])):
         attach = attach + p_open
         question = answer['post'][n]['question']
@@ -122,7 +122,7 @@ def create_qa(answer):
         ans = real_answer(ans)
         ans = answer_open.format(ans=ans)
         attach = attach + ans
-        attach = attach + p_close
+        attach = attach + answer_close
         print(attach)
     return attach
 
