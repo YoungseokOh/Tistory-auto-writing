@@ -13,7 +13,7 @@ import json
 MAX_RETRY = 10
 
 
-def get_html(html_url, timeout=10, decode='utf-8'):
+def get_html(html_url, timeout=20, decode='utf-8'):
     for tries in range(MAX_RETRY):
         try:
             with urllib.request.urlopen(html_url, timeout=timeout) as response:
@@ -49,9 +49,12 @@ def day_crawling(url, category_name, today_date, date_text):
     for i in results:
         # print(i.get_text())
         if '정답은' in i.get_text():
-            questions.append(results[results_count-1].get_text(strip=True))
-            answer.append(results[results_count].get_text(strip=True))
-            results_count += 1
+            if '블로그 이용방법 숙지하기(클릭)' in i.get_text():
+                continue
+            else:
+                questions.append(results[results_count-1].get_text(strip=True))
+                answer.append(results[results_count].get_text(strip=True))
+                results_count += 1
         else:
             results_count += 1
             continue

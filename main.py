@@ -344,6 +344,7 @@ def create_fortune_html(main_folder, daily_path, day_fortune, today_date):
         f.close()
     html = h.read()
     ads = utils.read_ads()
+    now_time = datetime.now().strftime("%H:%M")
     img_url = 'https://blog.kakaocdn.net/dn/dc2HXv/btrnB8PYqP1/xeApexb4nkwPR5thyRgUr0/img.jpg'
     html = html.format(attach=attach, img=img_url, ads=ads, today_date=today_date)
     return html
@@ -351,8 +352,6 @@ def create_fortune_html(main_folder, daily_path, day_fortune, today_date):
 
 if __name__ == '__main__':
     # Main Path
-    fortune_5min_count = 0
-    fortune_day_flag = 0 # '0' means not writing, '1' means wrote
     # blog_infomation = {'blog_name': 'all-snowball-effect',
     #                 'category_name': ['캐시워크 돈버는퀴즈', 'OK캐쉬백 오퀴즈', '오늘의 운세'],
     #                 'category_id': ['1005221', '1010176', '1010175']}
@@ -395,7 +394,7 @@ if __name__ == '__main__':
             utils.make_folder('out/{}'.format(today_date))
         print(f'Crawling start.\n')
         # Crawling quiz
-        # crawling_quiz.main(today_date)
+        crawling_quiz.main(today_date)
         if not utils.check_exist('fortune/{}'.format(date_str)):
             utils.make_folder('fortune/{}'.format(date_str))
         # Crawling daily's fortune
@@ -441,7 +440,7 @@ if __name__ == '__main__':
                     write_check_json = utils.json_load_utf8('answer/{}/{}/{}'.format(folder, today_date, day_answer))
                     if not write_check_json['post'][0]['question']:
                         continue
-                    new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로 오세요!'
+                    new_title = day_answer.split('.json')[0] + ' 빠른 정답 여기로!'
                     new_title = new_title.replace("(", "").replace(")", "")
                     # Wrote Check
                     exists_check, title_check, wrote_time, postId = wrote_check(write_check_list,
@@ -449,7 +448,7 @@ if __name__ == '__main__':
                                                                                 blog_infomation['category_id'][0],
                                                                                 new_title,
                                                                                 today_date,
-                                                                                ' 빠른 정답 확인 여기로 오세요!')
+                                                                                ' 빠른 정답 여기로!')
                     if not title_check is False:
                         new_title = title_check
                     if exists_check:
@@ -501,14 +500,14 @@ if __name__ == '__main__':
                     write_check_json = utils.json_load_utf8('answer/{}/{}/{}'.format(folder, today_date, day_answer))
                     if not write_check_json['post'][0]['question']:
                         continue
-                    new_title = day_answer.split('.json')[0] + ' 빠른 정답 확인 여기로 오세요!'
+                    new_title = day_answer.split('.json')[0] + ' 빠른 정답 여기로!'
                     # Wrote Check
                     exists_check, title_check, wrote_time, postId = wrote_check(write_check_list,
                                                                                 blog_infomation['blog_name'],
                                                                                 blog_infomation['category_id'][1],
                                                                                 new_title,
                                                                                 today_date,
-                                                                                ' 빠른 정답 확인 여기로 오세요!')
+                                                                                ' 빠른 정답 여기로!')
                     if not title_check is False:
                         new_title = title_check
                     if exists_check:
@@ -553,9 +552,7 @@ if __name__ == '__main__':
                 continue
         print(f'Work is done.')
         print(f'I am gonna take a break... current_time : {now_time}')
-        fortune_5min_count += 1
-        time.sleep(360)
-        print(f'fortune time is {fortune_5min_count}')
+        time.sleep(900)
         print(f'Working time! current_time : {now_time}')
 
     # utils.check_folder(origin)
