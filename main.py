@@ -349,6 +349,11 @@ def create_fortune_html(main_folder, daily_path, day_fortune, today_date):
     html = html.format(attach=attach, img=img_url, ads=ads, today_date=today_date)
     return html
 
+def save_html(title, save_path, html):
+    html_file = open(os.path.join(save_path, title) + '.html', 'w')
+    html_file.write(html)
+    html_file.close()
+    return True
 
 if __name__ == '__main__':
     # Main Path
@@ -364,6 +369,7 @@ if __name__ == '__main__':
     while(True):
         quiz_answer_path = './answer/'
         fortune_main_path = './fortune/'
+        html_save_path = './html/'
         # date_str -> "%y-%m-%d" or date.today()
         # date_str = "2021-12-12"
         date_str = date.today()
@@ -389,6 +395,9 @@ if __name__ == '__main__':
         else:
             today_date = datetime.strptime(date_str, "%Y-%m-%d")
             today_date = today_date.date()
+        # Create html_save folder
+        if not utils.check_exist('html/{}'.format(today_date)):
+            utils.make_folder('html/{}'.format(today_date))
         # Create out folder
         if not utils.check_exist('out/{}'.format(today_date)):
             utils.make_folder('out/{}'.format(today_date))
@@ -453,6 +462,7 @@ if __name__ == '__main__':
                         new_title = title_check
                     if exists_check:
                         if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 15:
+
                             update_html = create_quiz_html(html_path,
                                                            folder,
                                                            quiz_folder,
@@ -461,15 +471,18 @@ if __name__ == '__main__':
                                                            'cashwork',
                                                            blog_infomation['category_id'][0],
                                                            today_date)
+                            save_html(new_title,
+                                      os.path.join(html_save_path, str(today_date)),
+                                      update_html)
                             # Update
-                            blog_update(blog_infomation['blog_name'],
-                                        blog_infomation['category_id'][0],
-                                        new_title,
-                                        update_html,
-                                        'tag',
-                                        today_date,
-                                        now_time,
-                                        postId)
+                            # blog_update(blog_infomation['blog_name'],
+                            #             blog_infomation['category_id'][0],
+                            #             new_title,
+                            #             update_html,
+                            #             'tag',
+                            #             today_date,
+                            #             now_time,
+                            #             postId)
                             time.sleep(5)
                     else:
                         new_html = create_quiz_html(html_path,
@@ -480,14 +493,17 @@ if __name__ == '__main__':
                                                     'cashwork',
                                                     blog_infomation['category_id'][0],
                                                     today_date)
-                        # Write
-                        blog_write(blog_infomation['blog_name'],
-                                   blog_infomation['category_id'][0],
-                                   new_title,
-                                   new_html,
-                                   'tag',
-                                   today_date,
-                                   now_time)
+                        save_html(new_title,
+                                  os.path.join(html_save_path, str(today_date)),
+                                  new_html)
+                        # # Write
+                        # blog_write(blog_infomation['blog_name'],
+                        #            blog_infomation['category_id'][0],
+                        #            new_title,
+                        #            new_html,
+                        #            'tag',
+                        #            today_date,
+                        #            now_time)
                         time.sleep(5)
             # only 'OK캐쉬백 오퀴즈' Testing...
             if folder == 'OK캐쉬백 오퀴즈':
@@ -520,15 +536,20 @@ if __name__ == '__main__':
                                                            'okcash',
                                                            blog_infomation['category_id'][1],
                                                            today_date)
+                            # Save html
+                            save_html(new_title,
+                                      os.path.join(html_save_path, str(today_date)),
+                                      update_html)
+
                             # Update
-                            blog_update(blog_infomation['blog_name'],
-                                        blog_infomation['category_id'][1],
-                                        new_title,
-                                        update_html,
-                                        'tag',
-                                        today_date,
-                                        now_time,
-                                        postId)
+                            # blog_update(blog_infomation['blog_name'],
+                            #             blog_infomation['category_id'][1],
+                            #             new_title,
+                            #             update_html,
+                            #             'tag',
+                            #             today_date,
+                            #             now_time,
+                            #             postId)
                             time.sleep(5)
                     else:
                         new_html = create_quiz_html(html_path,
@@ -539,14 +560,18 @@ if __name__ == '__main__':
                                                     'okcash',
                                                     blog_infomation['category_id'][1],
                                                     today_date)
+
+                        save_html(new_title,
+                                  os.path.join(html_save_path, str(today_date)),
+                                  new_html)
                         # Write
-                        blog_write(blog_infomation['blog_name'],
-                                   blog_infomation['category_id'][1],
-                                   new_title,
-                                   new_html,
-                                   'tag',
-                                   today_date,
-                                   now_time)
+                        # blog_write(blog_infomation['blog_name'],
+                        #            blog_infomation['category_id'][1],
+                        #            new_title,
+                        #            new_html,
+                        #            'tag',
+                        #            today_date,
+                        #            now_time)
                         time.sleep(5)
             else:
                 continue

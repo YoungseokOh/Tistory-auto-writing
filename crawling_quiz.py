@@ -8,9 +8,10 @@ import utils
 import requests
 from datetime import date, datetime
 import json
+import ssl
 
 
-MAX_RETRY = 10
+MAX_RETRY = 15
 
 
 def get_html(html_url, timeout=20, decode='utf-8'):
@@ -31,6 +32,7 @@ def get_html(html_url, timeout=20, decode='utf-8'):
 def day_crawling(url, category_name, today_date, date_text):
     socket.setdefaulttimeout(20)
     test_url = url
+    time.sleep(5)
     req = requests.get(test_url)
     if req.status_code == 404:
         pass
@@ -96,7 +98,7 @@ def main(today_date):
             save_path = './answer/{}/{}'.format(category_name, date_str)
             if not utils.check_exist(save_path):
                 utils.make_folder(save_path)
-            for page_num in range(1, 6):
+            for page_num in range(1, 4):
                 date_text = '{}월{}일'.format(today_date.month, today_date.day)
                 blog_list_url = 'https://luckyquiz.tistory.com/{}?page={}'.format(
                     category_href, page_num)
