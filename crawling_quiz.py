@@ -11,10 +11,10 @@ import json
 import ssl
 
 
-MAX_RETRY = 15
+MAX_RETRY = 5
 
 
-def get_html(html_url, timeout=20, decode='utf-8'):
+def get_html(html_url, timeout=30, decode='utf-8'):
     for tries in range(MAX_RETRY):
         try:
             with urllib.request.urlopen(html_url, timeout=timeout) as response:
@@ -31,9 +31,10 @@ def get_html(html_url, timeout=20, decode='utf-8'):
 
 def day_crawling(url, category_name, today_date, date_text):
     socket.setdefaulttimeout(20)
+    headers = {'User-Agent' : 'Quiz_bot'}
     test_url = url
     time.sleep(5)
-    req = requests.get(test_url)
+    req = requests.get(test_url, headers=headers)
     if req.status_code == 404:
         pass
     res_read = get_html(test_url)
@@ -50,7 +51,7 @@ def day_crawling(url, category_name, today_date, date_text):
     results = bs.find_all('p')
     for i in results:
         # print(i.get_text())
-        if '정답은' in i.get_text():
+        if '정답은' in i.get_text() and '입니다.' in i.get_text():
             if '블로그 이용방법 숙지하기(클릭)' in i.get_text():
                 continue
             else:
@@ -63,12 +64,14 @@ def day_crawling(url, category_name, today_date, date_text):
     questions = utils.remove_xa0(questions)
     questions = utils.remove_quo_marks(questions)
     questions = utils.remove_bracket(questions)
+    answer = utils.remove_xa0(answer)
+    title = utils.remove_slash_ntr(title)
     data = {}
     data['post'] = []
     data['count'] = [len(questions)]
     for n in range(len(questions)):
         data['post'].append({"question": questions[n], "answer":answer[n]})
-    with open("./answer/{}/{}/{}.json".format(category_name, today_date, title), 'w', encoding='utf-8') as outfile:
+    with open("./answer/{}/{}/{}.json".format(category_name, today_date, title), 'w', encoding='UTF-8') as outfile:
         json.dump(data, outfile, ensure_ascii=False, indent=4)
     print(title)
     print(questions)

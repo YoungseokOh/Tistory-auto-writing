@@ -1,7 +1,7 @@
 import os
 import errno
 import json
-
+import random
 
 def check_folder(folder):
     try:
@@ -76,6 +76,7 @@ def remove_bracket(list):
 def remove_slash_ntr(str):
     temp_str = str.replace("\n", "")
     temp_str = temp_str.replace("\r", "")
+    temp_str = temp_str.replace("/", "")
     str = temp_str.replace("\t", "")
     str = str.split("(")[0]
     return str
@@ -202,3 +203,10 @@ def json_parsing(response_json):
     json_text = json.dumps(response_json, indent=4, ensure_ascii=False)
     return json_text
 
+
+def shuffle_title(title):
+    temp_shuffle_title = title.split(' ')
+    random.shuffle(temp_shuffle_title)
+    temp_shuffle_title = list(filter(None, temp_shuffle_title))
+    title = ' '.join(temp_shuffle_title)
+    return title

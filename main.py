@@ -349,8 +349,9 @@ def create_fortune_html(main_folder, daily_path, day_fortune, today_date):
     html = html.format(attach=attach, img=img_url, ads=ads, today_date=today_date)
     return html
 
+
 def save_html(title, save_path, html):
-    html_file = open(os.path.join(save_path, title) + '.html', 'w')
+    html_file = open(os.path.join(save_path, title) + '.html', 'w', encoding='UTF-8')
     html_file.write(html)
     html_file.close()
     return True
@@ -361,21 +362,26 @@ if __name__ == '__main__':
     #                 'category_name': ['캐시워크 돈버는퀴즈', 'OK캐쉬백 오퀴즈', '오늘의 운세'],
     #                 'category_id': ['1005221', '1010176', '1010175']}
 
-    blog_infomation = {'blog_name': 'buy-the-dip',
-                    'category_name': ['캐시워크 돈버는퀴즈', 'OK캐쉬백 오퀴즈', '오늘의 운세'],
-                    'category_id': ['975718', '975719', '975720']}
+    # blog_infomation = {'blog_name': 'buy-the-dip',
+    #                 'category_name': ['캐시워크 돈버는퀴즈', 'OK캐쉬백 오퀴즈', '오늘의 운세'],
+    #                 'category_id': ['975718', '975719', '975720']}
 
+    blog_infomation = {'blog_name': 'tastediary',
+                    'category_name': ['캐시워크 돈버는퀴즈', 'OK캐쉬백 오퀴즈', '오늘의 운세'],
+                    'category_id': ['1037142', '1039667', '1040594']}
+    # # blog_category_list('tastediary')
+    # blog_info()
     blog_category = []
     while(True):
         quiz_answer_path = './answer/'
         fortune_main_path = './fortune/'
         html_save_path = './html/'
         # date_str -> "%y-%m-%d" or date.today()
-        # date_str = "2021-12-12"
+        # date_str = "2022-02-17"
         date_str = date.today()
         now_time_init = datetime.now().strftime("%H:%M")
         morning = '09:00'
-        night = '21:00'
+        night = '24:00'
         morning_min = utils.hour_to_minutes(morning)
         night_min = utils.hour_to_minutes(night)
         now_min = utils.hour_to_minutes(now_time_init)
@@ -449,7 +455,9 @@ if __name__ == '__main__':
                     write_check_json = utils.json_load_utf8('answer/{}/{}/{}'.format(folder, today_date, day_answer))
                     if not write_check_json['post'][0]['question']:
                         continue
-                    new_title = day_answer.split('.json')[0] + ' 빠른 정답 여기로!'
+                    # Shuffle title
+                    # title = utils.shuffle_title(day_answer.split('.json')[0])
+                    new_title = day_answer.split('.json')[0] + ' 돈버는퀴즈 빠른 정답!'
                     new_title = new_title.replace("(", "").replace(")", "")
                     # Wrote Check
                     exists_check, title_check, wrote_time, postId = wrote_check(write_check_list,
@@ -457,11 +465,11 @@ if __name__ == '__main__':
                                                                                 blog_infomation['category_id'][0],
                                                                                 new_title,
                                                                                 today_date,
-                                                                                ' 빠른 정답 여기로!')
+                                                                                ' 돈버는퀴즈 빠른 정답!')
                     if not title_check is False:
                         new_title = title_check
                     if exists_check:
-                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 15:
+                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 5:
 
                             update_html = create_quiz_html(html_path,
                                                            folder,
@@ -475,14 +483,14 @@ if __name__ == '__main__':
                                       os.path.join(html_save_path, str(today_date)),
                                       update_html)
                             # Update
-                            # blog_update(blog_infomation['blog_name'],
-                            #             blog_infomation['category_id'][0],
-                            #             new_title,
-                            #             update_html,
-                            #             'tag',
-                            #             today_date,
-                            #             now_time,
-                            #             postId)
+                            blog_update(blog_infomation['blog_name'],
+                                        blog_infomation['category_id'][0],
+                                        new_title,
+                                        update_html,
+                                        'tag',
+                                        today_date,
+                                        now_time,
+                                        postId)
                             time.sleep(5)
                     else:
                         new_html = create_quiz_html(html_path,
@@ -497,13 +505,13 @@ if __name__ == '__main__':
                                   os.path.join(html_save_path, str(today_date)),
                                   new_html)
                         # # Write
-                        # blog_write(blog_infomation['blog_name'],
-                        #            blog_infomation['category_id'][0],
-                        #            new_title,
-                        #            new_html,
-                        #            'tag',
-                        #            today_date,
-                        #            now_time)
+                        blog_write(blog_infomation['blog_name'],
+                                   blog_infomation['category_id'][0],
+                                   new_title,
+                                   new_html,
+                                   'tag',
+                                   today_date,
+                                   now_time)
                         time.sleep(5)
             # only 'OK캐쉬백 오퀴즈' Testing...
             if folder == 'OK캐쉬백 오퀴즈':
@@ -527,7 +535,7 @@ if __name__ == '__main__':
                     if not title_check is False:
                         new_title = title_check
                     if exists_check:
-                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 15:
+                        if utils.hour_to_minutes(now_time) - utils.hour_to_minutes(wrote_time) >= 5:
                             update_html = create_quiz_html(html_path,
                                                            folder,
                                                            quiz_folder,
@@ -542,14 +550,14 @@ if __name__ == '__main__':
                                       update_html)
 
                             # Update
-                            # blog_update(blog_infomation['blog_name'],
-                            #             blog_infomation['category_id'][1],
-                            #             new_title,
-                            #             update_html,
-                            #             'tag',
-                            #             today_date,
-                            #             now_time,
-                            #             postId)
+                            blog_update(blog_infomation['blog_name'],
+                                        blog_infomation['category_id'][1],
+                                        new_title,
+                                        update_html,
+                                        'tag',
+                                        today_date,
+                                        now_time,
+                                        postId)
                             time.sleep(5)
                     else:
                         new_html = create_quiz_html(html_path,
@@ -565,19 +573,19 @@ if __name__ == '__main__':
                                   os.path.join(html_save_path, str(today_date)),
                                   new_html)
                         # Write
-                        # blog_write(blog_infomation['blog_name'],
-                        #            blog_infomation['category_id'][1],
-                        #            new_title,
-                        #            new_html,
-                        #            'tag',
-                        #            today_date,
-                        #            now_time)
+                        blog_write(blog_infomation['blog_name'],
+                                   blog_infomation['category_id'][1],
+                                   new_title,
+                                   new_html,
+                                   'tag',
+                                   today_date,
+                                   now_time)
                         time.sleep(5)
             else:
                 continue
         print(f'Work is done.')
         print(f'I am gonna take a break... current_time : {now_time}')
-        time.sleep(900)
+        time.sleep(1800)
         print(f'Working time! current_time : {now_time}')
 
     # utils.check_folder(origin)
