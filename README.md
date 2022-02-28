@@ -1,1 +1,1 @@
-# Tistory_Auto_Writing_Project
+# Blog_Auto_Writing_Project
