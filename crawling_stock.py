@@ -2,10 +2,31 @@ from pykrx import stock
 import utils
 import os
 import time
+import logging
+import requests
+import urllib
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
 from finta import TA
 import pandas as pd
 from datetime import datetime, timedelta, date
 from tqdm import tqdm
+MAX_RETRY = 5
+
+
+def get_html(html_url, timeout=30, decode='utf-8'):
+    for tries in range(MAX_RETRY):
+        try:
+            with urllib.request.urlopen(html_url, timeout=timeout) as response:
+                return response.read()
+        except Exception as e:
+            logging.warning(str(e) + ',html_url:{0}'.format(html_url))
+            print(f'Connection warning! tried : {tries}')
+            if tries < (MAX_RETRY - 1):
+                continue
+            else:
+                print('Has tried {0} times to access url {1}, all failed!'.format(MAX_RETRY, html_url))
+                return None
 
 
 def pykrx_read_csv(stock_name, Krx_Char_folder_path):
@@ -134,6 +155,7 @@ def main(today_date):
     Krx_char_folder_path = './krx_ohlcv'
     results_this_year_path = './results/this_year/'
     results_fig_path = './results/TI_fig/{}'.format(date_str)
+
     # From 2019-01-01 to today
     from_date = '2019-01-01'
     # Do not search this year
@@ -147,21 +169,27 @@ def main(today_date):
         # Hit the high in 52 weeks until today
         print('{} - 52 weeks high update for analysis ...'.format(date_str))
         time.sleep(0.5)
-        df_52w_csv = stock_52w_update(Krx_char_folder_path, utils.get_today_ymd())
+        df_52w_csv = stock_52w_update(Krx_char_folder_path, date_str)
         # Hit the high in 52 weeks before 2020/01/01 (base year)
         base_52w_csv = base_year_high_52_weeks(df_52w_csv, base_year, date_str)
     else:
         print('File is existed in results/this_year {}'.format(date_str))
         df_52w_csv = pd.read_csv(results_52w_csv)
         base_52w_csv = base_year_high_52_weeks(df_52w_csv, base_year, date_str)
-    top_5_stock_list = list(base_52w_csv[:10]['stock'])
-    for stock_name in top_5_stock_list:
+    top_10_stock_list = list(base_52w_csv[:10]['stock'])
+    for stock_name in top_10_stock_list:
         stock_csv = cal_technical_indicator_name(stock_name,
                                                  Krx_char_folder_path)
         if stock_csv.iloc[-1]['volume'] > 0:
             fig = utils.plot_technical_indicators(stock_name, stock_csv, 365)
-            fig.savefig('./results/TI_fig/{}/{}.png'.format(today_date, stock_name))
-
+            fig.savefig('./results/TI_fig/{}/{}.png'.format(date_str, stock_name))
+            # In folder, only exists one csv file
+            stock_code, _ = os.path.splitext(utils.read_folder_list(Krx_char_folder_path + '/' + stock_name)[0])
+            stock_info_url = 'https://navercomp.wisereport.co.kr/v2/company/c1010001.aspx?cmp_cd={}'.format(stock_code)
+            res = urllib.request.urlopen(stock_info_url).read()
+            bs = BeautifulSoup(res, "html.parser")
+            # Company summnary
+            bs.find_all('li', {'class': 'dot_cmp'})
 
 if __name__ == '__main__':
     main(date.today())
