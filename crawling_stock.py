@@ -6,6 +6,9 @@ import logging
 import requests
 import urllib
 from urllib.request import urlopen
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.utils import ChromeType
 from bs4 import BeautifulSoup
 from finta import TA
 import pandas as pd
@@ -186,10 +189,23 @@ def main(today_date):
             # In folder, only exists one csv file
             stock_code, _ = os.path.splitext(utils.read_folder_list(Krx_char_folder_path + '/' + stock_name)[0])
             stock_info_url = 'https://navercomp.wisereport.co.kr/v2/company/c1010001.aspx?cmp_cd={}'.format(stock_code)
-            res = urllib.request.urlopen(stock_info_url).read()
-            bs = BeautifulSoup(res, "html.parser")
-            # Company summnary
+            # Not allowed a new open window
+            options = webdriver.ChromeOptions()
+            options.add_argument("headless")
+            driver = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install(), options=options)
+            driver.get(stock_info_url)
+            html = driver.page_source
+            # res = urllib.request.urlopen(stock_info_url).read()
+            bs = BeautifulSoup(html, "html.parser")
+            # Company information
             bs.find_all('li', {'class': 'dot_cmp'})
+            # Crawling all table
+            table = bs.select('table')
+            table_html = str(table)
+            table_fs_list = pd.read_html(table_html)
+            # Finantial Statement
+            fs = table_fs_list[12]
+
 
 if __name__ == '__main__':
     main(date.today())
