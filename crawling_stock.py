@@ -1,6 +1,7 @@
 from pykrx import stock
 import utils
 import os
+import re
 import time
 import logging
 import requests
@@ -164,7 +165,7 @@ def main(today_date):
     # Do not search this year
     base_year = '2022-01-01'
     # KOSPI & KOSDAQ all stock scratch
-    # pykrx_scratch(from_date, date_str, Krx_char_folder_path)
+    pykrx_scratch(from_date, date_str, Krx_char_folder_path)
     utils.check_folder(results_this_year_path)
     utils.check_folder(results_fig_path)
     results_52w_csv = results_this_year_path + '52_weeks_analysis_' + date_str + '.csv'

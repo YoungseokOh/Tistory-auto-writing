@@ -82,6 +82,7 @@ def remove_slash_ntr(str):
     temp_str = str.replace("\n", "")
     temp_str = temp_str.replace("\r", "")
     temp_str = temp_str.replace("/", "")
+    temp_str = temp_str.replace("_", "")
     str = temp_str.replace("\t", "")
     str = str.split("(")[0]
     return str
@@ -93,6 +94,13 @@ def real_answer(str):
     str = str_temp.split('입니다.')
     str = str[0]
     return str
+
+
+def save_html(title, save_path, html):
+    html_file = open(os.path.join(save_path, title) + '.html', 'w', encoding='UTF-8')
+    html_file.write(html)
+    html_file.close()
+    return True
 
 
 def create_fortune(day_fortune):

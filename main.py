@@ -350,12 +350,6 @@ def create_fortune_html(main_folder, daily_path, day_fortune, today_date):
     return html
 
 
-def save_html(title, save_path, html):
-    html_file = open(os.path.join(save_path, title) + '.html', 'w', encoding='UTF-8')
-    html_file.write(html)
-    html_file.close()
-    return True
-
 if __name__ == '__main__':
     # Main Path
     # blog_infomation = {'blog_name': 'all-snowball-effect',
@@ -479,7 +473,7 @@ if __name__ == '__main__':
                                                            'cashwork',
                                                            blog_infomation['category_id'][0],
                                                            today_date)
-                            save_html(new_title,
+                            utils.save_html(new_title,
                                       os.path.join(html_save_path, str(today_date)),
                                       update_html)
                             # Update
@@ -501,7 +495,7 @@ if __name__ == '__main__':
                                                     'cashwork',
                                                     blog_infomation['category_id'][0],
                                                     today_date)
-                        save_html(new_title,
+                        utils.save_html(new_title,
                                   os.path.join(html_save_path, str(today_date)),
                                   new_html)
                         # # Write
@@ -545,7 +539,7 @@ if __name__ == '__main__':
                                                            blog_infomation['category_id'][1],
                                                            today_date)
                             # Save html
-                            save_html(new_title,
+                            utils.save_html(new_title,
                                       os.path.join(html_save_path, str(today_date)),
                                       update_html)
 
@@ -569,7 +563,7 @@ if __name__ == '__main__':
                                                     blog_infomation['category_id'][1],
                                                     today_date)
 
-                        save_html(new_title,
+                        utils.save_html(new_title,
                                   os.path.join(html_save_path, str(today_date)),
                                   new_html)
                         # Write
