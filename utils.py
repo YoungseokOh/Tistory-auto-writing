@@ -171,6 +171,11 @@ def find_original_title(str, pre, post, ext):
     return str
 
 
+def read_img(category_name):
+    quiz_img_urls = {'캐시워크 돈버는퀴즈': 'https://blog.kakaocdn.net/dn/cN9rMx/btrnHSEQp5P/kD5JeD13b8ZS6kXfeXR8t1/img.jpg',
+                     'OK캐쉬백 오퀴즈': 'https://blog.kakaocdn.net/dn/VZT5Q/btrnoBkgfpm/zDaY1kFbZ59XCFfk5Es1fK/img.jpg'}
+    return quiz_img_urls[category_name]
+
 def read_ads():
     ### Inplay ads
     # ads = '<script async src='"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2895485609612928"'' \

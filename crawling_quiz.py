@@ -12,7 +12,6 @@ import ssl
 
 MAX_RETRY = 5
 
-
 def get_html(html_url, timeout=30, decode='utf-8'):
     for tries in range(MAX_RETRY):
         try:
@@ -43,7 +42,7 @@ def get_category(title):
                 return category_name
 
 
-def day_crawling_blogspot(url, category_name):
+def day_crawling_blogspot(url, category_name, date_str):
     socket.setdefaulttimeout(20)
     headers = {'User-Agent': 'Quiz_bot'}
     test_url = url
@@ -59,24 +58,24 @@ def day_crawling_blogspot(url, category_name):
     attach = ''
     # results = bs.select('div.post-body.post-content')[0].contents
     results = bs.find("div", {'id': "quizarea"})
-    for i in results:
-        # print(i.get_text())
-        if '\n' in i:
-            continue
-        elif '<script>' in i.get_text():
-            continue
-        else:
-            str_i = str(i)
-            if '토실행운퀴즈' in str_i:
-                str_i = str_i.replace("토실행운퀴즈", "buy-the-dip")
-            answer.append(str_i)
-    for j in answer:
-        attach += j
-    html_r = open('./answer/{}/{}.html'.format(category_name, category_name))
+    # for i in results:
+    #     # print(i.get_text())
+    #     if '\n' in i:
+    #         continue
+    #     elif '<script>' in i.get_text():
+    #         continue
+    #     else:
+    #         str_i = str(i)
+    #         if '토실행운퀴즈' in str_i:
+    #             str_i = str_i.replace("토실행운퀴즈", "buy-the-dip")
+    #         answer.append(str_i)
+    # for j in answer:
+    #     attach += j
+    html_r = open('./answer/{}/{}.html'.format(category_name, category_name), encoding='UTF-8')
     html = html_r.read()
-    html = html.format(attach=attach)
+    html = html.format(attach=results, img=utils.read_img(category_name), ads=utils.read_ads())
     html_r.close()
-    utils.save_html(title, './html', html)
+    utils.save_html(title, './answer/{}/{}/'.format(category_name, date_str), html)
     # bs.select('div.post-body.post-content')[0].get_text().split('[퀴즈]')[1]
     return True
 
@@ -141,22 +140,23 @@ def main(today_date):
     else:
         today_date = datetime.strptime(date_str, "%Y-%m-%d")
     ### New version - blogspot ###
-    blog_list_url = 'https://luckyquiz3.blogspot.com/search/label/%EC%BA%90%EC%8B%9C%EC%9B%8C%ED%81%AC%20%EB%8F%88%EB%B2%84%EB%8A%94%ED%80%B4%EC%A6%88?&max-results=15' # 캐시워크 돈버는 퀴즈
+    blog_list_url = 'https://luckyquiz3.blogspot.com/search/label/%EC%BA%90%EC%8B%9C%EC%9B%8C%ED%81%AC%20%EB%8F%88%EB%B2%84%EB%8A%94%ED%80%B4%EC%A6%88?&max-results=30' # 캐시워크 돈버는 퀴즈
     blog_list_read = get_html(blog_list_url)
     bs_Test = BeautifulSoup(blog_list_read, 'html.parser')
     today_publish_check = '{}월{}일'.format(int(today_date.month), int(today_date.day))
-    for i in range(1, len(bs_Test.find_all('a', attrs={'class': 'entry-excerpt excerpt'}))):
+    for i in range(0, len(bs_Test.find_all('a', attrs={'class': 'entry-excerpt excerpt'}))):
         title = bs_Test.find_all('a', attrs={'class': 'entry-title-link'})[i]['title']
         if today_publish_check in title:
             print(title)
-            category_name = get_category(title)
+            # category_name = get_category(title)
             url = bs_Test.find_all('a', attrs={'class': 'entry-excerpt excerpt'})[i]['href']
+            category_name = "캐시워크 돈버는퀴즈"
             print(category_name)
             save_path = './answer/{}/{}'.format(category_name, date_str)
             if not utils.check_exist(save_path):
                 utils.make_folder(save_path)
             blog_crawling_url = url
-            day_crawling_blogspot(blog_crawling_url, category_name)
+            day_crawling_blogspot(blog_crawling_url, category_name, date_str)
 
     print('done')
     ### old version - tistory ###
@@ -196,4 +196,4 @@ def main(today_date):
 
 
 if __name__ == '__main__':
-    main('2022-09-08')
+    main("2022-10-17")
