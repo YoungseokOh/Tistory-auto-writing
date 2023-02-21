@@ -196,4 +196,4 @@ def main(today_date):
 
 
 if __name__ == '__main__':
-    main("2022-10-17")
+    main(date.today())
